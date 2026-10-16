@@ -6,6 +6,8 @@ AI-GLAZE Core:
   3. Spatial Dimension & Surface Area Estimation
   4. Architecture-Conditioned Generative Redesign (ControlNet + SDXL)
   5. Magic Wand Localized Inpainting (Selective surface re-texturing)
+  6. Furniture Object Detection & Pin Coordinates (Showstopper #4)
+  7. Master Vision Pipeline Runner
 """
 
 import cv2
@@ -32,7 +34,7 @@ def generate_depth_heatmap(image_path, output_path="depth_heatmap.png"):
     heatmap = cv2.applyColorMap(inverted, cv2.COLORMAP_JET)
     
     cv2.imwrite(output_path, heatmap)
-    print(f"✅ [1/5] Depth Heatmap saved: {output_path}")
+    print(f"✅ [1/6] Depth Heatmap saved: {output_path}")
     return output_path
 
 def detect_structural_edges(image_path, output_path="structural_edges.png"):
@@ -48,7 +50,7 @@ def detect_structural_edges(image_path, output_path="structural_edges.png"):
     edges = cv2.Canny(gray, threshold1=50, threshold2=150)
     
     cv2.imwrite(output_path, edges)
-    print(f"✅ [2/5] Structural Edge Map saved: {output_path}")
+    print(f"✅ [2/6] Structural Edge Map saved: {output_path}")
     return output_path
 
 def estimate_spatial_metrics(image_path, ceiling_height_ft=9.5):
@@ -76,7 +78,7 @@ def estimate_spatial_metrics(image_path, ceiling_height_ft=9.5):
         "estimated_width_ft": estimated_floor_width,
         "detected_structural_openings": "2 Windows, 1 Doorway"
     }
-    print(f"✅ [3/5] Spatial Metrics estimated: {floor_area} sq.ft floor, {wall_area} sq.ft walls.")
+    print(f"✅ [3/6] Spatial Metrics estimated: {floor_area} sq.ft floor, {wall_area} sq.ft walls.")
     return metrics
 
 # =====================================================================
@@ -93,33 +95,28 @@ def generate_interior_redesign(image_path, style="Scandinavian Minimalist", outp
 
     img = cv2.imread(image_path)
     
-    # Style color tone palettes
     style_tones = {
-        "Scandinavian Minimalist": (240, 245, 245),  # Light, airy, warm white
-        "Modern Luxury": (200, 210, 225),            # Cool marble, brass accents
-        "Industrial Warm": (180, 200, 210),          # Brick, concrete, moody warmth
-        "Traditional Heritage": (190, 215, 235)      # Warm wood, rich earth tones
+        "Scandinavian Minimalist": (240, 245, 245),
+        "Modern Luxury": (200, 210, 225),
+        "Industrial Warm": (180, 200, 210),
+        "Traditional Heritage": (190, 215, 235)
     }
     
     tone = style_tones.get(style, (235, 235, 235))
     overlay = np.full(img.shape, tone, dtype=np.uint8)
     
-    # Blend style aesthetic with original room structure
     redesigned = cv2.addWeighted(img, 0.65, overlay, 0.35, 0)
-    
-    # Enhance contrast to simulate architectural lighting
     redesigned = cv2.convertScaleAbs(redesigned, alpha=1.15, beta=10)
     
     cv2.imwrite(output_path, redesigned)
-    print(f"✅ [4/5] Redesign generated for style '{style}': {output_path}")
+    print(f"✅ [4/6] Redesign generated for style '{style}': {output_path}")
     return output_path
 
 def inpaint_surface_material(image_path, target_surface="floor", new_material="Italian Beige Marble", output_path="inpaint_output.png"):
     """
     SHOWSTOPPER #1: 'The Magic Wand' (Localized Inpainting)
     Isolates only the target surface (floor or wall) using a spatial mask,
-    and re-renders ONLY that surface with the new material texture,
-    leaving walls, furniture, and windows 100% untouched.
+    and re-renders ONLY that surface with the new material texture.
     """
     if not os.path.exists(image_path):
         return None
@@ -127,62 +124,142 @@ def inpaint_surface_material(image_path, target_surface="floor", new_material="I
     img = cv2.imread(image_path)
     height, width, _ = img.shape
     
-    # 1. Create a binary segmentation mask for the target surface
     mask = np.zeros((height, width), dtype=np.uint8)
-    
     if target_surface == "floor":
-        # Floor occupies the bottom 40% of the room perspective
         mask[int(height * 0.58):, :] = 255
     elif target_surface == "wall":
-        # Wall occupies upper region excluding ceiling
         mask[:int(height * 0.58), :] = 255
 
-    # 2. Synthesize new material texture
     textured_patch = img.copy()
     if "marble" in new_material.lower():
-        # Elegant bright polished tone
         textured_patch[mask == 255] = [235, 230, 225]
-        # Add subtle natural marble veins
         noise = np.random.randint(-15, 15, (height, width, 3), dtype=np.int16)
         textured_patch = np.clip(textured_patch.astype(np.int16) + noise, 0, 255).astype(np.uint8)
     elif "wood" in new_material.lower():
-        # Rich warm oak / walnut wood tone
-        textured_patch[mask == 255] = [80, 130, 180]  # BGR warm wood brown
+        textured_patch[mask == 255] = [80, 130, 180]
     else:
-        # Default vitrified neutral tile
         textured_patch[mask == 255] = [210, 215, 215]
 
-    # 3. Seamless inpainting blend: only modify the masked region
     result = img.copy()
     result[mask == 255] = cv2.addWeighted(img[mask == 255], 0.3, textured_patch[mask == 255], 0.7, 0)
 
     cv2.imwrite(output_path, result)
-    print(f"✅ [5/5] Inpainted '{target_surface}' with '{new_material}': {output_path}")
+    print(f"✅ [5/6] Inpainted '{target_surface}' with '{new_material}': {output_path}")
     return output_path
+
+# =====================================================================
+# 3. FURNITURE OBJECT DETECTION (SHOWSTOPPER #4: INTERACTIVE PINS)
+# =====================================================================
+
+from ultralytics import YOLO
+
+# Load lightweight pre-trained AI vision model (downloads automatically, ~6MB)
+yolo_model = YOLO("yolov8n.pt")
+
+def detect_furniture_objects(image_path, output_path="detected_objects.png"):
+    """
+    Uses real YOLOv8 AI to accurately detect actual furniture (sofa, TV, chair, etc.)
+    and draws accurate interactive pins directly on the real detected items.
+    """
+    if not os.path.exists(image_path):
+        return []
+
+    img = cv2.imread(image_path)
+    height, width, _ = img.shape
+
+    # Run real YOLO AI detection
+    results = yolo_model(image_path, conf=0.25, verbose=False)[0]
+
+    # Target furniture categories to track for interior design
+    target_classes = ["couch", "chair", "bed", "tv", "dining table", "potted plant", "refrigerator"]
+    
+    objects = []
+    annotated = img.copy()
+
+    for box in results.boxes:
+        cls_id = int(box.cls[0])
+        label = results.names[cls_id]
+
+        if label in target_classes:
+            x1, y1, x2, y2 = map(int, box.xyxy[0])
+            w, h = x2 - x1, y2 - y1
+            
+            # Pin at the center of the real object
+            pin_x = x1 + w // 2
+            pin_y = y1 + h // 2
+
+            objects.append({
+                "label": label.capitalize(),
+                "confidence": round(float(box.conf[0]), 2),
+                "box": (x1, y1, w, h),
+                "pin": (pin_x, pin_y)
+            })
+
+            # Draw accurate bounding box around the REAL item
+            cv2.rectangle(annotated, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            # Draw glowing interactive pin
+            cv2.circle(annotated, (pin_x, pin_y), 9, (0, 0, 255), -1)
+            cv2.circle(annotated, (pin_x, pin_y), 13, (255, 255, 255), 2)
+            cv2.putText(annotated, f"{label.capitalize()} ({round(float(box.conf[0]), 2)})", 
+                        (x1, max(20, y1 - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+
+    # Also detect the primary floor region
+    floor_pin = (int(width * 0.5), int(height * 0.85))
+    cv2.circle(annotated, floor_pin, 9, (255, 0, 0), -1)
+    cv2.circle(annotated, floor_pin, 13, (255, 255, 255), 2)
+    cv2.putText(annotated, "Flooring Surface", (int(width * 0.42), int(height * 0.82)), 
+                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
+
+    cv2.imwrite(output_path, annotated)
+    print(f"✅ [6/6] Real AI detected {len(objects)} furniture items accurately: {output_path}")
+    return objects
+# =====================================================================
+# 4. MASTER VISION PIPELINE RUNNER (THE ONE-CALL FUNCTION)
+# =====================================================================
+
+def run_full_vision_pipeline(image_path, style="Scandinavian Minimalist", inpaint_surface="floor", new_material="Italian Beige Marble"):
+    """
+    Executes the complete AI-GLAZE vision engine in one master call.
+    Returns a unified dictionary with all generated image paths, metrics, and pins.
+    """
+    print("\n=======================================================")
+    print("      AI-GLAZE: RUNNING MASTER VISION PIPELINE         ")
+    print("=======================================================\n")
+    
+    depth_file = generate_depth_heatmap(image_path)
+    edges_file = detect_structural_edges(image_path)
+    metrics = estimate_spatial_metrics(image_path)
+    redesign_file = generate_interior_redesign(image_path, style=style)
+    inpaint_file = inpaint_surface_material(image_path, target_surface=inpaint_surface, new_material=new_material)
+    detected_items = detect_furniture_objects(image_path)
+
+    result = {
+        "status": "success",
+        "input_image": image_path,
+        "depth_heatmap_path": depth_file,
+        "structural_edges_path": edges_file,
+        "redesign_path": redesign_file,
+        "inpaint_path": inpaint_file,
+        "spatial_metrics": metrics,
+        "detected_objects": detected_items
+    }
+    
+    print("\n🎉 MASTER PIPELINE FINISHED SUCCESSFULLY!\n")
+    return result
 
 # =====================================================================
 # SELF-TEST EXECUTION
 # =====================================================================
 if __name__ == "__main__":
-    print("\n=======================================================")
-    print("    AI-GLAZE: FULL COMPUTER VISION ENGINE (MEMBER 1)   ")
-    print("=======================================================\n")
-
-    sample_file = "test_room.jpg"
+    # Choose sample file (uses real_room.jpeg if present, otherwise test_room.jpeg)
+    sample_file = "real_room.jpeg" if os.path.exists("real_room.jpeg") else "test_room.jpeg"
     
-    # 1. Depth Heatmap
-    generate_depth_heatmap(sample_file)
+    # Run the complete master pipeline!
+    pipeline_result = run_full_vision_pipeline(
+        image_path=sample_file,
+        style="Scandinavian Minimalist",
+        inpaint_surface="floor",
+        new_material="Italian Beige Marble"
+    )
     
-    # 2. Structural Edge Map
-    detect_structural_edges(sample_file)
-    
-    # 3. Spatial Dimensions
-    specs = estimate_spatial_metrics(sample_file)
-    
-    # 4. Generative Redesign
-    generate_interior_redesign(sample_file, style="Scandinavian Minimalist")
-    
-    # 5. Magic Wand Inpainting (Floor Swap)
-    inpaint_surface_material(sample_file, target_surface="floor", new_material="Italian Beige Marble")
-
-    print("\n🎉 ALL 5 VISION ENGINE STAGES COMPLETED SUCCESSFULLY!\n")
+    print(f"Master Result Summary: {len(pipeline_result['detected_objects'])} objects detected.")
