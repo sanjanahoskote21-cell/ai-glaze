@@ -1,0 +1,52 @@
+{
+    "project_name": "AI-GLAZE Living Room Transformation",
+    "input_photo": "real_room.jpeg",
+    "style_chosen": "Scandinavian Minimalist",
+    "target_budget": 4000.0,
+    "vision_outputs": {
+        "depth_heatmap": "depth_heatmap.png",
+        "structural_edges": "structural_edges.png",
+        "redesign_render": "redesign_output.png",
+        "inpaint_render": "inpaint_output.png",
+        "room_dimensions": {
+            "floor_area_sqft": 184.0,
+            "wall_surface_area_sqft": 477.5,
+            "estimated_length_ft": 16.0,
+            "estimated_width_ft": 11.5,
+            "detected_structural_openings": "2 Windows, 1 Doorway"
+        },
+        "detected_furniture_count": 3
+    },
+    "procurement_and_sourcing": [
+        {
+            "name": "Premium Glazed Vitrified Tile",
+            "rate_sqft": 4.5,
+            "tier": "Budget",
+            "supplier": "City Tiles Depot"
+        },
+        {
+            "name": "Acrylic Emulsion Washable Paint",
+            "rate_sqft": 1.5,
+            "coats": 2,
+            "supplier": "Asian Paints Store"
+        },
+        {
+            "name": "3-Seater Comfort Sectional",
+            "price": 650.0,
+            "supplier": "Urban Living Decor"
+        }
+    ],
+    "bill_of_quantities": {
+        "flooring_subtotal": 910.8,
+        "painting_subtotal": 1432.5,
+        "furniture_subtotal": 650.0,
+        "grand_total": 2993.3,
+        "budget_cap": 4000.0,
+        "status": "Within Budget",
+        "delta": 1006.7,
+        "optimization_applied": true
+    },
+    "optimization_notes": [
+        "Swapped 'Italian Carrara Marble' to 'Premium Glazed Vitrified Tile' (Saved: $2,125.20)"
+    ]
+}
