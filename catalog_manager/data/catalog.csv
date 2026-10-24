@@ -1,0 +1,23 @@
+id,name,category,tier,price,unit,url,supplier,image_path
+P001,Classic Beige Wall Paint,paint,budget,450.0,litre,https://example.com/paint1,Demo Supplier,data/images/paint1.jpg
+P002,Premium Ivory Wall Paint,paint,mid,850.0,litre,https://example.com/paint2,Demo Supplier,data/images/paint2.jpg
+P003,Luxury Pearl Wall Paint,paint,luxury,1500.0,litre,https://example.com/paint3,Demo Supplier,data/images/paint3.jpg
+P004,Light Oak Vinyl Flooring,flooring,budget,75.0,sqft,https://example.com/floor1,Demo Supplier,data/images/floor1.jpg
+P005,Premium Wooden Flooring,flooring,mid,145.0,sqft,https://example.com/floor2,Demo Supplier,data/images/floor2.jpg
+P006,Luxury Oak Flooring,flooring,luxury,240.0,sqft,https://example.com/floor3,Demo Supplier,data/images/floor3.jpg
+P007,Compact Two Seater Sofa,sofa,budget,8500.0,piece,https://example.com/sofa1,Demo Supplier,data/images/sofa1.jpg
+P008,Modern Three Seater Sofa,sofa,mid,18000.0,piece,https://example.com/sofa2,Demo Supplier,data/images/sofa2.jpg
+P009,Luxury Velvet Sofa,sofa,luxury,35000.0,piece,https://example.com/sofa3,Demo Supplier,data/images/sofa3.jpg
+P010,Single Wooden Bed,bed,budget,7000.0,piece,https://example.com/bed1,Demo Supplier,data/images/bed1.jpg
+P011,Queen Storage Bed,bed,mid,16000.0,piece,https://example.com/bed2,Demo Supplier,data/images/bed2.jpg
+P012,Luxury Upholstered Bed,bed,luxury,32000.0,piece,https://example.com/bed3,Demo Supplier,data/images/bed3.jpg
+P013,Small Study Table,table,budget,2500.0,piece,https://example.com/table1,Demo Supplier,data/images/table1.jpg
+P014,Minimalist Work Desk,table,mid,6500.0,piece,https://example.com/table2,Demo Supplier,data/images/table2.jpg
+P015,Designer Wooden Table,table,luxury,14000.0,piece,https://example.com/table3,Demo Supplier,data/images/table3.jpg
+P016,Simple LED Ceiling Light,lighting,budget,800.0,piece,https://example.com/light1,Demo Supplier,data/images/light1.jpg
+P017,Modern Pendant Light,lighting,mid,2500.0,piece,https://example.com/light2,Demo Supplier,data/images/light2.jpg
+P018,Designer Chandelier,lighting,luxury,12000.0,piece,https://example.com/light3,Demo Supplier,data/images/light3.jpg
+P019,Round Coffee Table,table,budget,1800.0,piece,https://example.com/table4,Demo Supplier,data/images/table4.jpg
+P020,Modern Floor Lamp,lighting,mid,3200.0,piece,https://example.com/light4,Demo Supplier,data/images/light4.jpg
+P021,Minimalist Wooden Nightstand,table,budget,3200.0,piece,https://example.com/stand1,Demo Woodcraft,data/images/p021_table.jpg
+P022,Warm Industrial Pendant Lamp,lighting,budget,1850.0,piece,https://example.com/pendant1,Demo Lights,data/images/p022_lighting.jpg
