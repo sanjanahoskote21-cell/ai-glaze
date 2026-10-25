@@ -1,8 +1,9 @@
 {
     "project_name": "AI-GLAZE Living Room Transformation",
+    "market": "India (INR \u20b9)",
     "input_photo": "real_room.jpeg",
     "style_chosen": "Scandinavian Minimalist",
-    "target_budget": 4000.0,
+    "target_budget_inr": 120000.0,
     "vision_outputs": {
         "depth_heatmap": "depth_heatmap.png",
         "structural_edges": "structural_edges.png",
@@ -19,34 +20,34 @@
     },
     "procurement_and_sourcing": [
         {
-            "name": "Premium Glazed Vitrified Tile",
-            "rate_sqft": 4.5,
+            "name": "Kajaria Double-Charged Vitrified Tile",
+            "rate_sqft": 75.0,
             "tier": "Budget",
-            "supplier": "City Tiles Depot"
+            "supplier": "Kajaria World, Bangalore"
         },
         {
-            "name": "Acrylic Emulsion Washable Paint",
-            "rate_sqft": 1.5,
+            "name": "Asian Paints Royale Luxury Emulsion",
+            "rate_sqft": 28.0,
             "coats": 2,
-            "supplier": "Asian Paints Store"
+            "supplier": "Asian Paints Colour Idea Store"
         },
         {
-            "name": "3-Seater Comfort Sectional",
-            "price": 650.0,
-            "supplier": "Urban Living Decor"
+            "name": "Modern 3-Seater L-Shape Fabric Sectional",
+            "price": 38000.0,
+            "supplier": "Urban Ladder / Pepperfry"
         }
     ],
-    "bill_of_quantities": {
-        "flooring_subtotal": 910.8,
-        "painting_subtotal": 1432.5,
-        "furniture_subtotal": 650.0,
-        "grand_total": 2993.3,
-        "budget_cap": 4000.0,
+    "bill_of_quantities_inr": {
+        "flooring_subtotal": 15180.0,
+        "painting_subtotal": 26740.0,
+        "furniture_subtotal": 38000.0,
+        "grand_total": 79920.0,
+        "budget_cap": 120000.0,
         "status": "Within Budget",
-        "delta": 1006.7,
+        "delta": 40080.0,
         "optimization_applied": true
     },
     "optimization_notes": [
-        "Swapped 'Italian Carrara Marble' to 'Premium Glazed Vitrified Tile' (Saved: $2,125.20)"
+        "Swapped 'Italian Carrara Polished Marble' to 'Kajaria Double-Charged Vitrified Tile' (Saved: \u20b961,732.00)"
     ]
 }
