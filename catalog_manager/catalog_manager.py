@@ -8,8 +8,6 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from PIL import Image
-import torch
-from transformers import AutoModel, AutoProcessor
 
 # ---------------------------------------------------------
 # CONFIGURATION
@@ -23,7 +21,7 @@ INDEX_FILE = BASE_DIR / "models" / "catalog_index.npz"
 METADATA_FILE = BASE_DIR / "models" / "catalog_metadata.json"
 
 MODEL_NAME = "google/siglip-base-patch16-224"
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = "cpu"
 
 
 # ---------------------------------------------------------
@@ -150,6 +148,21 @@ class CatalogManager:
         if self.model is not None and self.processor is not None:
             return
 
+        try:
+            import torch
+            from transformers import AutoModel, AutoProcessor
+        except OSError as err:
+            if "4551" in str(err) or "Application Control" in str(err):
+                raise RuntimeError(
+                    "Windows Smart App Control / Defender blocked PyTorch DLLs. "
+                    "To fix: Open Windows Security -> Virus & threat protection -> "
+                    "Manage settings -> Exclusions -> Add exclusion -> Folder -> select 'C:\\Users\\yuva\\Documents\\AI-GLAZE'."
+                ) from err
+            raise
+
+        if torch.cuda.is_available():
+            self.device = "cuda"
+
         print(f"Loading SigLIP on {self.device}...")
         self.processor = AutoProcessor.from_pretrained(self.model_name)
         self.model = AutoModel.from_pretrained(self.model_name)
@@ -163,6 +176,7 @@ class CatalogManager:
 
     def _image_embedding(self, image: str | Path | Image.Image) -> np.ndarray:
         self._load_model()
+        import torch
 
         if isinstance(image, (str, Path)):
             image_path = Path(image)

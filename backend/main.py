@@ -261,4 +261,4 @@ async def visual_search(
         )
 
     finally:
-        await image.close()
+        await image.close()
