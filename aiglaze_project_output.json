@@ -10,20 +10,20 @@
         "redesign_render": "redesign_output.png",
         "inpaint_render": "inpaint_output.png",
         "room_dimensions": {
-            "floor_area_sqft": 184.0,
-            "wall_surface_area_sqft": 477.5,
-            "estimated_length_ft": 16.0,
+            "floor_area_sqft": 140.3,
+            "wall_surface_area_sqft": 405.3,
+            "estimated_length_ft": 12.2,
             "estimated_width_ft": 11.5,
             "detected_structural_openings": "2 Windows, 1 Doorway"
         },
-        "detected_furniture_count": 3
+        "detected_furniture_count": 4
     },
     "procurement_and_sourcing": [
         {
-            "name": "Kajaria Double-Charged Vitrified Tile",
-            "rate_sqft": 75.0,
-            "tier": "Budget",
-            "supplier": "Kajaria World, Bangalore"
+            "name": "Italian Carrara Polished Marble",
+            "rate_sqft": 380.0,
+            "tier": "Luxury",
+            "supplier": "A-Class Marble Gallery, Bangalore"
         },
         {
             "name": "Asian Paints Royale Luxury Emulsion",
@@ -38,16 +38,14 @@
         }
     ],
     "bill_of_quantities_inr": {
-        "flooring_subtotal": 15180.0,
-        "painting_subtotal": 26740.0,
+        "flooring_subtotal": 58645.4,
+        "painting_subtotal": 22696.8,
         "furniture_subtotal": 38000.0,
-        "grand_total": 79920.0,
+        "grand_total": 119342.2,
         "budget_cap": 120000.0,
         "status": "Within Budget",
-        "delta": 40080.0,
-        "optimization_applied": true
+        "delta": 657.8,
+        "optimization_applied": false
     },
-    "optimization_notes": [
-        "Swapped 'Italian Carrara Polished Marble' to 'Kajaria Double-Charged Vitrified Tile' (Saved: \u20b961,732.00)"
-    ]
+    "optimization_notes": []
 }
