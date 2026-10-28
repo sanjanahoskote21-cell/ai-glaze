@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-GLAZE | Visual Product Search</title>
+  <style>
+    :root {
+      --bg: #f8f6f0;
+      --card-bg: #ffffff;
+      --primary: #2b2d42;
+      --accent: #b5835a;
+      --accent-hover: #9c6e49;
+      --text: #2b2d42;
+      --text-muted: #6c757d;
+      --border: #e3ded6;
+      --badge: #eef2f5;
+      --success: #2a9d8f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 24px; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header { margin-bottom: 24px; text-align: center; }
+    header h1 { font-size: 28px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
+    header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+    
+    .layout { display: grid; grid-template-columns: 360px 1fr; gap: 24px; }
+    @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+    
+    .panel { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+    .panel h2 { font-size: 18px; margin-bottom: 16px; font-weight: 600; }
+    
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #faf9f6;
+      position: relative;
+    }
+    .dropzone:hover { border-color: var(--accent); background: #fdfaf7; }
+    .dropzone input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .preview-box { margin-top: 14px; display: none; text-align: center; }
+    .preview-box img { max-width: 100%; max-height: 220px; border-radius: 8px; border: 1px solid var(--border); object-fit: contain; }
+    
+    .form-group { margin-top: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+    .form-group select, .form-group input {
+      width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);
+      background: #fff; font-size: 14px; outline: none; transition: border 0.2s;
+    }
+    .form-group select:focus, .form-group input:focus { border-color: var(--accent); }
+    
+    .btn {
+      display: block; width: 100%; margin-top: 20px; padding: 12px; border-radius: 8px;
+      background: var(--accent); color: #fff; border: none; font-size: 15px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .btn:disabled { background: #ccc; cursor: not-allowed; }
+    
+    /* Results */
+    .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+    
+    .product-card {
+      background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border);
+      overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column;
+    }
+    .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(0,0,0,0.06); }
+    .product-img-box {
+      width: 100%; height: 200px; background: #faf9f6; display: flex; align-items: center;
+      justify-content: center; overflow: hidden; border-bottom: 1px solid var(--border);
+    }
+    .product-img-box img { max-width: 90%; max-height: 90%; object-fit: contain; }
+    .product-info { padding: 14px; flex-grow: 1; display: flex; flex-direction: column; }
+    .product-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; }
+    
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .tag { font-size: 11px; font-weight: 600; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: var(--badge); color: var(--text-muted); }
+    .tag.sim { background: #e8f5e9; color: var(--success); font-weight: 700; }
+    
+    .price-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: auto; padding-top: 10px; border-top: 1px dashed var(--border); }
+    .price { font-size: 17px; font-weight: 700; color: var(--primary); }
+    
+    .alt-btn {
+      margin-top: 10px; padding: 7px 10px; background: #faf9f6; border: 1px solid var(--border);
+      border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--accent);
+      transition: all 0.2s; width: 100%; text-align: center;
+    }
+    .alt-btn:hover { background: var(--accent); color: #fff; }
+    
+    /* Cheaper alternatives modal/inline */
+    .alt-container { margin-top: 10px; padding: 10px; background: #fdfbf7; border-radius: 6px; border: 1px solid #ebdccb; font-size: 12px; }
+    .alt-item { display: flex; align-items: center; gap: 8px; margin-top: 6px; padding-top: 6px; border-top: 1px solid #f0e6da; }
+    .alt-item img { width: 40px; height: 40px; object-fit: contain; border-radius: 4px; background: #fff; border: 1px solid #ddd; }
+    
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .empty-state span { font-size: 40px; display: block; margin-bottom: 12px; }
+    
+    .loader { display: none; text-align: center; padding: 40px; }
+    .spinner {
+      width: 36px; height: 36px; border: 3px solid #e3ded6; border-top: 3px solid var(--accent);
+      border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AI-GLAZE Visual Search Studio</h1>
+      <p>Interior Design Product Catalog & Visual Similarity Engine</p>
+    </header>
+
+    <div class="layout">
+      <!-- Search Controls -->
+      <div class="panel">
+        <h2>1. Upload Room Item</h2>
+        
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" accept="image/*">
+          <p id="dropText">📸 Click or drag an image here</p>
+        </div>
+        
+        <div class="preview-box" id="previewBox">
+          <img id="previewImg" src="" alt="Query Preview">
+        </div>
+
+        <div class="form-group">
+          <label for="categorySelect">Category Filter</label>
+          <select id="categorySelect">
+            <option value="">All Categories</option>
+            <option value="sofa">Sofa</option>
+            <option value="table">Table</option>
+            <option value="bed">Bed</option>
+            <option value="lighting">Lighting</option>
+            <option value="flooring">Flooring</option>
+            <option value="paint">Paint</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="tierSelect">Price Tier</label>
+          <select id="tierSelect">
+            <option value="">All Tiers</option>
+            <option value="budget">Budget</option>
+            <option value="mid">Mid Tier</option>
+            <option value="luxury">Luxury</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="maxPriceInput">Max Price (₹)</label>
+          <input type="number" id="maxPriceInput" placeholder="No limit">
+        </div>
+
+        <button class="btn" id="searchBtn" disabled>Search Visually Similar Products</button>
+      </div>
+
+      <!-- Results Panel -->
+      <div class="panel">
+        <div class="results-header">
+          <h2>2. Matching Catalog Products</h2>
+          <span id="matchCount" style="font-size: 13px; color: var(--text-muted);">0 results</span>
+        </div>
+
+        <div class="loader" id="loader">
+          <div class="spinner"></div>
+          <p>Running SigLIP vector search...</p>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+          <span>🛋️</span>
+          <p>Upload a product image on the left and click <b>Search</b> to see visual matches.</p>
+        </div>
+
+        <div class="results-grid" id="resultsGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const previewBox = document.getElementById("previewBox");
+    const previewImg = document.getElementById("previewImg");
+    const dropText = document.getElementById("dropText");
+    const searchBtn = document.getElementById("searchBtn");
+    const categorySelect = document.getElementById("categorySelect");
+    const tierSelect = document.getElementById("tierSelect");
+    const maxPriceInput = document.getElementById("maxPriceInput");
+    const resultsGrid = document.getElementById("resultsGrid");
+    const emptyState = document.getElementById("emptyState");
+    const loader = document.getElementById("loader");
+    const matchCount = document.getElementById("matchCount");
+
+    let selectedFile = null;
+
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      selectedFile = file;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        previewImg.src = event.target.result;
+        previewBox.style.display = "block";
+        dropText.textContent = `Selected: ${file.name}`;
+        searchBtn.disabled = false;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    searchBtn.addEventListener("click", async () => {
+      if (!selectedFile) return;
+
+      loader.style.display = "block";
+      emptyState.style.display = "none";
+      resultsGrid.innerHTML = "";
+      matchCount.textContent = "Searching...";
+      searchBtn.disabled = true;
+
+      const formData = new FormData();
+      formData.append("image", selectedFile);
+
+      if (categorySelect.value) formData.append("category", categorySelect.value);
+      if (tierSelect.value) formData.append("tier", tierSelect.value);
+      if (maxPriceInput.value && parseFloat(maxPriceInput.value) > 0) {
+        formData.append("max_price", maxPriceInput.value);
+      }
+      formData.append("top_k", "8");
+
+      try {
+        const response = await fetch("/visual-search", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        loader.style.display = "none";
+        searchBtn.disabled = false;
+
+        if (!data.results || data.results.length === 0) {
+          matchCount.textContent = "0 products found";
+          emptyState.style.display = "block";
+          emptyState.innerHTML = "<span>🔍</span><p>No matching products found with these filters. Try clearing the category or price limit.</p>";
+          return;
+        }
+
+        matchCount.textContent = `${data.count} products found`;
+        renderResults(data.results);
+
+      } catch (err) {
+        loader.style.display = "none";
+        searchBtn.disabled = false;
+        alert("Search failed: " + err.message);
+      }
+    });
+
+    function renderResults(products) {
+      resultsGrid.innerHTML = "";
+      products.forEach((prod) => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        const simPercent = (prod.similarity * 100).toFixed(1);
+        const imageUrl = prod.image_url || "/static/images/placeholder.jpg";
+
+        card.innerHTML = `
+          <div class="product-img-box">
+            <img src="${imageUrl}" alt="${prod.name}" loading="lazy">
+          </div>
+          <div class="product-info">
+            <div class="tags">
+              <span class="tag sim">${simPercent}% Match</span>
+              <span class="tag">${prod.category}</span>
+              <span class="tag">${prod.tier}</span>
+            </div>
+            <div class="product-title">${prod.name}</div>
+            <div class="price-row">
+              <div class="price">₹${prod.price.toLocaleString("en-IN")}</div>
+              <span style="font-size: 11px; color: var(--text-muted);">per ${prod.unit}</span>
+            </div>
+            <button class="alt-btn" onclick="loadAlternatives('${prod.id}', this)">💡 Cheaper Alternatives</button>
+            <div class="alt-container" id="alt-${prod.id}" style="display: none;"></div>
+          </div>
+        `;
+        resultsGrid.appendChild(card);
+      });
+    }
+
+    async function loadAlternatives(productId, btn) {
+      const container = document.getElementById(`alt-${productId}`);
+      if (container.style.display === "block") {
+        container.style.display = "none";
+        btn.textContent = "💡 Cheaper Alternatives";
+        return;
+      }
+
+      btn.textContent = "Searching cheaper swaps...";
+      try {
+        const res = await fetch(`/products/${productId}/alternatives?cheaper_than=true&top_k=3`);
+        const data = await res.json();
+
+        if (!data.alternatives || data.alternatives.length === 0) {
+          container.innerHTML = "<em>This is already the best price in this category!</em>";
+        } else {
+          container.innerHTML = "<strong>Visually Similar Budget Options:</strong>";
+          data.alternatives.forEach(alt => {
+            const savings = alt.price_savings ? `Save ₹${alt.price_savings.toLocaleString("en-IN")}` : "";
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "alt-item";
+            itemDiv.innerHTML = `
+              <img src="${alt.image_url}" alt="${alt.name}">
+              <div style="flex-grow: 1;">
+                <div><b>${alt.name}</b></div>
+                <div style="color: var(--success); font-weight: 600;">₹${alt.price.toLocaleString("en-IN")} (${savings})</div>
+                <div style="font-size: 10px; color: var(--text-muted);">${(alt.similarity * 100).toFixed(0)}% visual match</div>
+              </div>
+            `;
+            container.appendChild(itemDiv);
+          });
+        }
+        container.style.display = "block";
+        btn.textContent = "▲ Hide Alternatives";
+      } catch (err) {
+        btn.textContent = "💡 Cheaper Alternatives";
+        alert("Failed to fetch alternatives: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
