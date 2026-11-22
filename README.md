@@ -67,7 +67,7 @@ The end-to-end architecture integrates deep perception models, spatial geometry 
 
 | Name | USN | Role & Primary Ownership |
 | :--- | :--- | :--- |
-| **K M Sanjana** *(Lead)* | `1MJ24AI024` | **System Architect, Computer Vision & AI Lead**<br>• Depth estimation, YOLOv8 furniture detection & pins, hybrid generative engine |
+| **K M Sanjana**  | `1MJ24AI024` | **System Architect, Computer Vision & AI Lead**<br>• Depth estimation, YOLOv8 furniture detection & pins, hybrid generative engine |
 | **Akshata A Kalmud** | `1MJ24AI005` | **Interactive UI & 2D Floorplan Lead**<br>• Streamlit multi-tab architecture, 2D plot-to-blueprint layout generator, design controls |
 | **Anjana R** | `1MJ24AI008` | **Product Catalog & Visual Search Lead**<br>• Indian supplier SKU catalog (`catalog.csv`), CLIP embedding visual similarity search |
 | **C Yuvashree** | `1MJ24AI014` | **Cost Engineering, BoQ & Reporting Lead**<br>• Knapsack budget optimization math, contractor BoQ PDF/HTML engine, GST calculation |
