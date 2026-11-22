@@ -369,6 +369,12 @@ if "detected_objects" not in st.session_state:
 if "detected_objects_path" not in st.session_state:
     st.session_state.detected_objects_path = "detected_objects.png" if os.path.exists("detected_objects.png") else None
 
+if "active_preview_mode" not in st.session_state:
+    st.session_state.active_preview_mode = "✨ Style Redesign"
+
+if "last_action_msg" not in st.session_state:
+    st.session_state.last_action_msg = None
+
 
 # =====================================================================
 # 4. SIDEBAR CONTROLS & INDIAN RUPEE (₹) BUDGET
@@ -658,6 +664,8 @@ with tab_workspace:
                 with st.spinner(f"Synthesizing {selected_style} design with geometric invariance..."):
                     r_path = vision_engine.generate_interior_redesign(current_img, style=selected_style)
                     st.session_state.redesign_path = r_path
+                    st.session_state.active_preview_mode = "✨ Style Redesign"
+                    st.session_state.last_action_msg = f"✨ Synthesized '{selected_style}' redesign!"
                     st.rerun()
 
         st.markdown("---")
@@ -677,20 +685,53 @@ with tab_workspace:
                         current_img, target_surface=target_surface, new_material=new_material
                     )
                     st.session_state.inpaint_path = inp_path
+                    st.session_state.active_preview_mode = "🪄 Localized Inpaint"
+                    st.session_state.last_action_msg = f"🪄 Inpainted {target_surface.capitalize()} with '{new_material}'!"
                     st.rerun()
 
     with redesign_col_view:
-        view_tabs = st.tabs(["✨ Style Redesign", "🪄 Localized Inpaint"])
-        with view_tabs[0]:
+        if st.session_state.last_action_msg:
+            st.success(st.session_state.last_action_msg)
+            
+        preview_modes = ["✨ Style Redesign", "🪄 Localized Inpaint", "🔄 Before vs After Side-by-Side"]
+        curr_mode = st.session_state.active_preview_mode
+        curr_idx = preview_modes.index(curr_mode) if curr_mode in preview_modes else 0
+        
+        chosen_view = st.radio(
+            "Live Output View:",
+            preview_modes,
+            index=curr_idx,
+            horizontal=True
+        )
+        st.session_state.active_preview_mode = chosen_view
+
+        if chosen_view == "✨ Style Redesign":
             if st.session_state.redesign_path and os.path.exists(st.session_state.redesign_path):
-                st.image(st.session_state.redesign_path, caption=f"Redesigned ({selected_style})", use_container_width=True)
+                img_obj = Image.open(st.session_state.redesign_path)
+                st.image(img_obj, caption=f"Redesigned ({selected_style})", use_container_width=True)
             else:
-                st.image(current_img, caption="Original Room Preview", use_container_width=True)
-        with view_tabs[1]:
+                st.image(Image.open(current_img), caption="Original Room Preview", use_container_width=True)
+                
+        elif chosen_view == "🪄 Localized Inpaint":
             if st.session_state.inpaint_path and os.path.exists(st.session_state.inpaint_path):
-                st.image(st.session_state.inpaint_path, caption=f"Inpainted: {new_material} on {target_surface.capitalize()}", use_container_width=True)
+                img_obj = Image.open(st.session_state.inpaint_path)
+                st.image(img_obj, caption=f"Inpainted: {new_material} on {target_surface.capitalize()}", use_container_width=True)
             else:
-                st.image(current_img, caption="Original Room Preview", use_container_width=True)
+                st.image(Image.open(current_img), caption="Original Room Preview (Click 'Inpaint Surface Only' to generate)", use_container_width=True)
+                
+        elif chosen_view == "🔄 Before vs After Side-by-Side":
+            b_col, a_col = st.columns(2)
+            with b_col:
+                st.image(Image.open(current_img), caption="Before: Original Room", use_container_width=True)
+            with a_col:
+                if st.session_state.inpaint_path and os.path.exists(st.session_state.inpaint_path) and curr_mode == "🪄 Localized Inpaint":
+                    st.image(Image.open(st.session_state.inpaint_path), caption=f"After: Inpainted ({new_material})", use_container_width=True)
+                elif st.session_state.redesign_path and os.path.exists(st.session_state.redesign_path):
+                    st.image(Image.open(st.session_state.redesign_path), caption=f"After: Redesigned ({selected_style})", use_container_width=True)
+                elif st.session_state.inpaint_path and os.path.exists(st.session_state.inpaint_path):
+                    st.image(Image.open(st.session_state.inpaint_path), caption=f"After: Inpainted ({new_material})", use_container_width=True)
+                else:
+                    st.info("Click 'Generate Redesign' or 'Inpaint Surface' to see comparison.")
 
     st.markdown("---")
 
@@ -710,9 +751,9 @@ with tab_workspace:
     det_col_img, det_col_table = st.columns([1, 1])
     with det_col_img:
         if st.session_state.detected_objects_path and os.path.exists(st.session_state.detected_objects_path):
-            st.image(st.session_state.detected_objects_path, caption="YOLOv8 Localized Furniture & Interactive Pins", use_container_width=True)
+            st.image(Image.open(st.session_state.detected_objects_path), caption="YOLOv8 Localized Furniture & Interactive Pins", use_container_width=True)
         else:
-            st.image(current_img, caption="Original Room", use_container_width=True)
+            st.image(Image.open(current_img), caption="Original Room", use_container_width=True)
     
     with det_col_table:
         st.markdown("#### 📋 Detected Spatial Inventory")
