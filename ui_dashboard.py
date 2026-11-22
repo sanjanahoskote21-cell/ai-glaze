@@ -27,6 +27,8 @@ import streamlit as st
 # Safe import of vision_engine written by Tech Lead (Member 1)
 try:
     import vision_engine
+    import importlib
+    importlib.reload(vision_engine)
     VISION_ENGINE_AVAILABLE = True
     VISION_ERROR_MSG = ""
 except Exception as err:

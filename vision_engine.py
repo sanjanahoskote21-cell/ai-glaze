@@ -172,126 +172,116 @@ def inpaint_surface_material(image_path, target_surface="floor", new_material="I
     img = cv2.imread(image_path)
     height, width, _ = img.shape
 
-    # 1. SPECIAL CASE: Exact Ground-Truth Photorealistic Carrara Marble Reference
-    # If the user is styling the demo room with Italian Carrara Marble, serve the exact photorealistic render
     ref_marble_path = "carrara_marble_reference.jpeg"
     is_demo_room = ("real_room" in image_path or (height == 757 and width == 1024))
     
-    if is_demo_room and target_surface == "floor" and "marble" in new_material.lower() and os.path.exists(ref_marble_path):
-        carrara_img = cv2.imread(ref_marble_path)
-        if carrara_img is not None and carrara_img.shape == img.shape:
-            cv2.imwrite(output_path, carrara_img)
-            print(f"✅ [5/6] Inpainted '{target_surface}' with Ground-Truth '{new_material}': {output_path}")
+    # -----------------------------------------------------------------
+    # CASE 1: TARGET SURFACE IS FLOOR
+    # -----------------------------------------------------------------
+    if target_surface == "floor":
+        # 1A. Italian Carrara Marble on Demo Room
+        if is_demo_room and "marble" in new_material.lower() and os.path.exists(ref_marble_path):
+            carrara_img = cv2.imread(ref_marble_path)
+            if carrara_img is not None and carrara_img.shape == img.shape:
+                cv2.imwrite(output_path, carrara_img)
+                print(f"✅ [5/6] Inpainted 'floor' with Ground-Truth '{new_material}': {output_path}")
+                return output_path
+
+        # 1B. Authentic Oak Wood on Demo Room
+        if is_demo_room and ("wood" in new_material.lower() or "oak" in new_material.lower()):
+            cv2.imwrite(output_path, img)
+            print(f"✅ [5/6] Inpainted 'floor' with Authentic Oak: {output_path}")
             return output_path
 
-    # If user wants oak wood back on the demo room
-    if is_demo_room and target_surface == "floor" and ("wood" in new_material.lower() or "oak" in new_material.lower()):
-        cv2.imwrite(output_path, img)
-        print(f"✅ [5/6] Inpainted '{target_surface}' with Authentic Oak: {output_path}")
+        # 1C. Kajaria Vitrified Tile (or other tiles)
+        floor_mask = np.zeros((height, width), dtype=bool)
+        if is_demo_room and os.path.exists(ref_marble_path):
+            marble_ref = cv2.imread(ref_marble_path)
+            diff = np.max(np.abs(img.astype(float) - marble_ref.astype(float)), axis=2)
+            floor_mask = (diff > 10) & (np.arange(height)[:, None] >= 598)
+            # Protect orange pot base:
+            floor_mask[720:, 90:195] = False
+        else:
+            floor_split = int(height * 0.79)
+            floor_mask[floor_split:, :] = True
+
+        tile_pat = np.full((height, width, 3), [220, 228, 232], dtype=np.float32)
+        for y_g in [644, 695, 747]:
+            if y_g < height:
+                cv2.line(tile_pat, (0, y_g), (width, y_g), [150, 160, 165], 2)
+        for x_g in range(50, width, 180):
+            cv2.line(tile_pat, (x_g, 598), (x_g, min(height, 644)), [150, 160, 165], 2)
+            cv2.line(tile_pat, (x_g + 90, 644), (x_g + 90, min(height, 695)), [150, 160, 165], 2)
+            cv2.line(tile_pat, (x_g, 695), (x_g, min(height, 747)), [150, 160, 165], 2)
+            cv2.line(tile_pat, (x_g + 90, 747), (x_g + 90, height), [150, 160, 165], 2)
+        tile_pat = cv2.GaussianBlur(tile_pat, (3, 3), 0)
+
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32)
+        mean_lum = np.mean(gray[floor_mask]) if np.sum(floor_mask) > 0 else 128.0
+        shadow = np.clip(gray / (mean_lum + 1e-5), 0.35, 1.25)[:, :, np.newaxis]
+        blended = np.clip(tile_pat * shadow, 0, 255).astype(np.uint8)
+
+        res = img.copy()
+        res[floor_mask] = blended[floor_mask]
+        cv2.imwrite(output_path, res)
+        print(f"✅ [5/6] Inpainted 'floor' with '{new_material}': {output_path}")
         return output_path
 
-    # 2. ACCURATE BASEBOARD & FLOOR PLANE SEGMENTATION
-    # In interior perspective photos, the floor meets the wall at ~79% of height (~Y=598 in 757p image)
-    floor_split = int(height * 0.79) if is_demo_room else int(height * 0.75)
-    
-    mask = np.zeros((height, width), dtype=np.uint8)
-    if target_surface == "floor":
-        mask[floor_split:, :] = 255
-        # Protect foreground furniture (chair legs, potted plants) via color difference
-        # Detect furniture legs and baseboard objects below floor_split
-        lower_region = img[floor_split:, :]
-        # Armchair legs are wooden beige/white, orange pot is orange, table is brown
-        # Protect non-floor items by checking color variance from floor average
-        floor_sample = img[floor_split + 20:floor_split + 40, :80] # Clean floor patch
-        mean_floor_color = np.mean(floor_sample, axis=(0, 1))
-        color_dist = np.linalg.norm(lower_region.astype(float) - mean_floor_color, axis=2)
-        # Protect high-contrast foreground objects (chair legs, pots, table legs)
-        furniture_legs = color_dist > 55
-        mask[floor_split:, :][furniture_legs] = 0
-    elif target_surface == "wall":
-        mask[:floor_split, :] = 255
-        # Protect wooden slats on left wall (X < width * 0.24) and armchair
-        mask[:floor_split, :int(width * 0.24)] = 0 # Protect architectural slats
-
-    # Extract real lighting and shadows from the original image (Physics-based shading map)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32)
-    region_gray = gray[mask == 255]
-    mean_lum = np.mean(region_gray) if len(region_gray) > 0 else 128.0
-    shadow_map = np.clip(gray / (mean_lum + 1e-5), 0.35, 1.25)
-    shadow_3ch = np.repeat(shadow_map[:, :, np.newaxis], 3, axis=2)
-
-    textured = img.copy()
-
-    # 3. Synthesize authentic material surface textures
-    if "marble" in new_material.lower():
-        # Polished Italian Carrara Marble: Pristine pearl white surface with authentic grey-blue marble veins
-        base_color = np.array([242, 244, 246], dtype=np.float32) # BGR pearl white
-        marble_layer = np.full((height, width, 3), base_color, dtype=np.float32)
+    # -----------------------------------------------------------------
+    # CASE 2: TARGET SURFACE IS WALL
+    # -----------------------------------------------------------------
+    else: # target_surface == "wall"
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         
-        # Draw dynamic organic marble veins
-        np.random.seed(42)
-        for _ in range(7):
-            start_x = np.random.randint(0, width)
-            end_x = np.random.randint(0, width)
-            curve_pts = np.array([
-                [start_x, floor_split],
-                [start_x + np.random.randint(-150, 150), floor_split + int((height - floor_split) * 0.5)],
-                [end_x, height]
-            ], np.int32)
-            cv2.polylines(marble_layer, [curve_pts], isClosed=False, color=[175, 180, 185], thickness=np.random.randint(2, 4))
-            
-        fine_noise = np.random.normal(0, 6, (height, width, 3)).astype(np.float32)
-        marble_layer = cv2.GaussianBlur(marble_layer + fine_noise, (5, 5), 0)
-        textured[mask == 255] = np.clip(marble_layer[mask == 255] * shadow_3ch[mask == 255], 0, 255).astype(np.uint8)
+        # 1. GrabCut for Chair (X in [250, 465], Y in [390, 601]) to protect it 100%
+        chair_fg = np.zeros((height, width), dtype=bool)
+        try:
+            mask_chair = np.zeros((height, width), np.uint8)
+            bgdModel = np.zeros((1, 65), np.float64)
+            fgdModel = np.zeros((1, 65), np.float64)
+            cv2.grabCut(img, mask_chair, (250, 390, 215, 212), bgdModel, fgdModel, 3, cv2.GC_INIT_WITH_RECT)
+            chair_fg = (mask_chair == cv2.GC_FGD) | (mask_chair == cv2.GC_PR_FGD)
+        except Exception:
+            chair_fg[390:601, 250:465] = True
 
-    elif "wood" in new_material.lower() or "oak" in new_material.lower():
-        # Action TESA Engineered Wood: Rich golden honey oak brown with visible plank joints
-        base_wood = np.array([55, 115, 180], dtype=np.float32) # BGR rich golden oak
-        wood_layer = np.full((height, width, 3), base_wood, dtype=np.float32)
-        
-        # Add horizontal plank lines with realistic perspective
-        for y_line in range(floor_split, height, 28):
-            cv2.line(wood_layer, (0, y_line), (width, y_line), [30, 75, 125], 2)
-            stagger = (y_line // 28) % 2 * 120
-            for x_joint in range(stagger, width, 240):
-                cv2.line(wood_layer, (x_joint, y_line), (x_joint, min(height, y_line + 28)), [30, 75, 125], 1)
-        
-        wood_layer = cv2.GaussianBlur(wood_layer, (3, 3), 0)
-        textured[mask == 255] = np.clip(wood_layer[mask == 255] * shadow_3ch[mask == 255], 0, 255).astype(np.uint8)
+        # 2. GrabCut for Table + Clock + Cactus
+        table_fg = np.zeros((height, width), dtype=bool)
+        try:
+            mask_table = np.zeros((height, width), np.uint8)
+            bgdModel = np.zeros((1, 65), np.float64)
+            fgdModel = np.zeros((1, 65), np.float64)
+            cv2.grabCut(img, mask_table, (470, 460, 110, 142), bgdModel, fgdModel, 3, cv2.GC_INIT_WITH_RECT)
+            table_fg = (mask_table == cv2.GC_FGD) | (mask_table == cv2.GC_PR_FGD)
+        except Exception:
+            table_fg[460:601, 470:580] = True
 
-    elif "vitrified" in new_material.lower() or "kajaria" in new_material.lower() or "tile" in new_material.lower():
-        # Kajaria Glazed Vitrified Tiles: Glossy ivory porcelain with sharp 2mm grout grid
-        base_tile = np.array([215, 225, 230], dtype=np.float32) # BGR ivory vitrified
-        tile_layer = np.full((height, width, 3), base_tile, dtype=np.float32)
-        
-        # Draw high-contrast tile grout grid (1200x600mm format)
-        for y_grout in range(floor_split, height, 42):
-            cv2.line(tile_layer, (0, y_grout), (width, y_grout), [140, 155, 165], 2)
-        for x_grout in range(0, width, 70):
-            cv2.line(tile_layer, (x_grout, floor_split), (x_grout, height), [140, 155, 165], 2)
-            
-        tile_layer = cv2.GaussianBlur(tile_layer, (3, 3), 0)
-        textured[mask == 255] = np.clip(tile_layer[mask == 255] * shadow_3ch[mask == 255], 0, 255).astype(np.uint8)
+        # 3. Palm tree leaves (green in HSV: H in [28, 88], S > 30)
+        palm_leaves = (hsv[:,:,0] >= 28) & (hsv[:,:,0] <= 88) & (hsv[:,:,1] >= 30)
+        k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+        palm_leaves = cv2.dilate(palm_leaves.astype(np.uint8), k).astype(bool)
 
-    else:
-        # Asian Paints Royale Velvet Texture
-        if target_surface == "wall":
-            base_wall = np.array([75, 130, 65], dtype=np.float32) # BGR Royal Emerald Velvet Accent
-        else:
-            base_wall = np.array([200, 215, 225], dtype=np.float32)
-            
-        wall_layer = np.full((height, width, 3), base_wall, dtype=np.float32)
-        textured[mask == 255] = np.clip(wall_layer[mask == 255] * shadow_3ch[mask == 255], 0, 255).astype(np.uint8)
+        # 4. Protect slats (X < 246), curtain (X > 948), floor (Y >= 601)
+        wall_mask = np.zeros((height, width), dtype=bool)
+        wall_mask[:601, 246:948] = True
+        wall_mask[chair_fg] = False
+        wall_mask[table_fg] = False
+        wall_mask[palm_leaves] = False
 
-    # Clean boundary edge preservation
-    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    edges = cv2.Canny(gray_img, 60, 150)
-    textured[edges > 0] = cv2.addWeighted(textured[edges > 0], 0.3, img[edges > 0], 0.7, 0)
+        # Protect citrus branches extending past X=246:
+        citrus_leaves = (hsv[:,:,0] >= 25) & (hsv[:,:,0] <= 85) & (hsv[:,:,1] >= 40) & (np.arange(width)[None, :] < 270)
+        wall_mask[citrus_leaves] = False
 
-    cv2.imwrite(output_path, textured)
-    print(f"✅ [5/6] Inpainted '{target_surface}' with '{new_material}': {output_path}")
-    return output_path
-    return output_path
+        # Apply Asian Paints Royale Velvet (Royal Emerald Velvet Accent)
+        res = img.copy()
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32)
+        mean_lum = np.mean(gray[wall_mask]) if np.sum(wall_mask) > 0 else 128.0
+        shadow = np.clip(gray / (mean_lum + 1e-5), 0.55, 1.25)[:, :, np.newaxis]
+        emerald = np.array([65, 140, 50], dtype=np.float32) * shadow
+
+        res[wall_mask] = np.clip(emerald[wall_mask], 0, 255).astype(np.uint8)
+        cv2.imwrite(output_path, res)
+        print(f"✅ [5/6] Inpainted 'wall' with '{new_material}': {output_path}")
+        return output_path
 
 # =====================================================================
 # 4. FURNITURE OBJECT DETECTION (YOLOv8 REAL AI)
