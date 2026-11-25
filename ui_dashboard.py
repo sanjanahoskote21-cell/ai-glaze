@@ -24,6 +24,17 @@ from PIL import Image
 import pandas as pd
 import streamlit as st
 
+# Directory Anchor for absolute asset resolution regardless of launch cwd
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def resolve_path(rel_path):
+    if not rel_path:
+        return None
+    if os.path.isabs(rel_path):
+        return rel_path
+    abs_p = os.path.join(BASE_DIR, rel_path)
+    return abs_p if os.path.exists(abs_p) else os.path.join(BASE_DIR, rel_path)
+
 # Safe import of vision_engine written by Tech Lead (Member 1)
 try:
     import vision_engine
@@ -53,74 +64,432 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for Modern Glassmorphism, Auth Cards & Clean Typography
+# Custom CSS for Modern Luxury Glassmorphism & High-End Architecture Studio UI
 st.markdown("""
 <style>
-    /* Global Card & Container Styling */
-    .main-header-card {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
-        padding: 24px 28px;
-        border-radius: 16px;
-        color: white;
-        margin-bottom: 24px;
-        box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    /* Global Typography & Deep Luxury Architectural Canvas */
+    html, body, [class*="css"] {
+        font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        color: #F1F5F9;
     }
-    .main-header-title {
-        font-size: 2.2rem;
-        font-weight: 800;
-        margin-bottom: 6px;
-        letter-spacing: -0.5px;
+
+    h1, h2, h3, h4, .brand-title, .main-header-title {
+        font-family: 'Outfit', sans-serif !important;
+        letter-spacing: -0.02em;
     }
-    .main-header-subtitle {
-        font-size: 1.15rem;
-        font-weight: 400;
-        opacity: 0.95;
-        letter-spacing: 0.3px;
+
+    /* Ambient Architectural Grid & Mesh Background */
+    .stApp {
+        background: 
+            radial-gradient(circle at 12% 18%, rgba(99, 102, 241, 0.18) 0%, transparent 45%),
+            radial-gradient(circle at 88% 82%, rgba(14, 165, 233, 0.15) 0%, transparent 45%),
+            radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.10) 0%, transparent 60%),
+            linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+            #080C15 !important;
+        background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px, 100% 100% !important;
     }
-    .tag-pill {
-        display: inline-block;
-        background: rgba(255, 255, 255, 0.22);
-        padding: 4px 12px;
+
+    /* Luxury Studio Navigation Header */
+    .studio-header {
+        background: rgba(15, 23, 42, 0.78);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 20px;
-        font-size: 0.82rem;
-        font-weight: 600;
-        margin-right: 8px;
-        margin-top: 10px;
-        backdrop-filter: blur(4px);
-    }
-    
-    /* User Profile Bar */
-    .user-profile-bar {
-        background: #0f172a;
-        border: 1px solid #334155;
-        border-radius: 12px;
-        padding: 10px 18px;
-        margin-bottom: 20px;
+        padding: 24px 32px;
+        margin-bottom: 24px;
+        box-shadow: 0 20px 48px -15px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18);
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        color: #f1f5f9;
-        font-size: 0.92rem;
+        gap: 16px;
     }
-    
+
+    .studio-brand-group {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .brand-icon-box {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.85rem;
+        box-shadow: 0 8px 26px rgba(124, 58, 237, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .brand-title {
+        font-size: 2.15rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #FFFFFF 30%, #94A3B8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .brand-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 4px 10px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #06B6D4, #3B82F6);
+        color: white;
+        margin-left: 8px;
+        vertical-align: middle;
+        -webkit-text-fill-color: white;
+        white-space: nowrap !important;
+        display: inline-block;
+    }
+
+    .brand-tagline {
+        font-size: 0.95rem;
+        color: #94A3B8;
+        margin-top: 4px;
+        font-weight: 400;
+    }
+
+    .studio-meta-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #CBD5E1;
+        backdrop-filter: blur(10px);
+        transition: all 0.2s ease;
+    }
+    .meta-pill:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #10B981;
+        box-shadow: 0 0 10px #10B981;
+        animation: pulseAnimation 2s infinite;
+    }
+
+    @keyframes pulseAnimation {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Auth Portal Main Header Card */
+    .main-header-card {
+        background: rgba(15, 23, 42, 0.78);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 24px;
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+        box-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        margin-bottom: 28px;
+    }
+
+    .main-header-title {
+        font-size: 3rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        background: linear-gradient(135deg, #FFFFFF 20%, #A5B4FC 60%, #38BDF8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 6px;
+    }
+
+    .main-header-subtitle {
+        font-size: 1.05rem;
+        color: #94A3B8;
+        max-width: 680px;
+        margin: 0 auto 16px auto;
+        line-height: 1.5;
+        font-weight: 400;
+    }
+
+    .tag-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(99, 102, 241, 0.12);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        color: #C7D2FE;
+        padding: 6px 14px;
+        border-radius: 9999px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin: 4px;
+        backdrop-filter: blur(10px);
+        transition: all 0.25s ease;
+    }
+    .tag-pill:hover {
+        background: rgba(99, 102, 241, 0.25);
+        border-color: rgba(99, 102, 241, 0.6);
+        transform: translateY(-1px);
+        color: #FFFFFF;
+    }
+
+    /* Floating Logged-in User Profile Bar */
+    .user-profile-bar {
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 12px 24px;
+        margin-bottom: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Glass Cards */
+    .glass-card {
+        background: rgba(15, 23, 42, 0.68);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 24px;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+        margin-bottom: 20px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card:hover {
+        border-color: rgba(99, 102, 241, 0.35);
+        box-shadow: 0 20px 44px -10px rgba(99, 102, 241, 0.22);
+    }
+
+    /* Section Subheaders */
+    .section-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin-top: 14px;
+        margin-bottom: 12px;
+        color: #F8FAFC;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-left: 4px solid #6366F1;
+        padding-left: 14px;
+        letter-spacing: -0.01em;
+    }
+
+    .step-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #6366F1, #8B5CF6);
+        color: #FFFFFF;
+        font-size: 0.88rem;
+        font-weight: 800;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Primary CTA Buttons Overrides */
+    div.stButton > button[kind="primary"], div.stButton > button[data-testid="baseButton-primary"] {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #d946ef 100%) !important;
+        color: #FFFFFF !important;
+        font-family: 'Outfit', sans-serif !important;
+        font-weight: 700 !important;
+        font-size: 0.98rem !important;
+        letter-spacing: 0.3px !important;
+        border: none !important;
+        border-radius: 14px !important;
+        padding: 12px 24px !important;
+        box-shadow: 0 6px 22px rgba(124, 58, 237, 0.45) !important;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    div.stButton > button[kind="primary"]:hover, div.stButton > button[data-testid="baseButton-primary"]:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 32px rgba(124, 58, 237, 0.65) !important;
+        color: #FFFFFF !important;
+    }
+
+    /* Secondary Buttons */
+    div.stButton > button[kind="secondary"], div.stButton > button[data-testid="baseButton-secondary"] {
+        background: rgba(30, 41, 59, 0.65) !important;
+        color: #E2E8F0 !important;
+        border: 1px solid rgba(255, 255, 255, 0.14) !important;
+        border-radius: 14px !important;
+        font-weight: 600 !important;
+        backdrop-filter: blur(10px) !important;
+        transition: all 0.2s ease !important;
+    }
+    div.stButton > button[kind="secondary"]:hover, div.stButton > button[data-testid="baseButton-secondary"]:hover {
+        background: rgba(51, 65, 85, 0.85) !important;
+        border-color: rgba(99, 102, 241, 0.4) !important;
+        color: #FFFFFF !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Streamlit Forms Reskinning */
+    [data-testid="stForm"] {
+        background: rgba(15, 23, 42, 0.65) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 20px !important;
+        padding: 26px !important;
+        backdrop-filter: blur(20px) !important;
+        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45) !important;
+    }
+
+    /* Input Fields & Select Boxes */
+    div[data-baseweb="input"] > div, div[data-baseweb="select"] > div {
+        background-color: rgba(15, 23, 42, 0.85) !important;
+        border: 1px solid rgba(255, 255, 255, 0.14) !important;
+        border-radius: 12px !important;
+        color: #F8FAFC !important;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    div[data-baseweb="input"]:focus-within > div, div[data-baseweb="select"]:focus-within > div {
+        border-color: #6366F1 !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3) !important;
+    }
+
+    /* File Uploader Luxury Dropzone */
+    section[data-testid="stFileUploadDropzone"] {
+        background: rgba(15, 23, 42, 0.55) !important;
+        border: 2px dashed rgba(99, 102, 241, 0.4) !important;
+        border-radius: 16px !important;
+        padding: 28px !important;
+        transition: all 0.25s ease !important;
+    }
+    section[data-testid="stFileUploadDropzone"]:hover {
+        border-color: #38BDF8 !important;
+        background: rgba(99, 102, 241, 0.1) !important;
+    }
+
+    /* Slider Thumb and Glow Track */
+    div[data-baseweb="slider"] div[role="slider"] {
+        background-color: #38BDF8 !important;
+        box-shadow: 0 0 14px rgba(56, 189, 248, 0.8) !important;
+        border: 2px solid #FFFFFF !important;
+    }
+
+    /* Tabs Overrides */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+        background: rgba(15, 23, 42, 0.85);
+        padding: 8px 10px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 12px;
+        padding: 10px 26px;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        color: #94A3B8;
+        border: none !important;
+        transition: all 0.2s ease;
+    }
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, rgba(79, 70, 229, 0.4), rgba(124, 58, 237, 0.4)) !important;
+        color: #FFFFFF !important;
+        border: 1px solid rgba(124, 58, 237, 0.55) !important;
+        box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3) !important;
+    }
+
+    /* Material Swatch Preview Card */
+    .material-swatch-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 16px;
+        padding: 18px 22px;
+        margin-top: 10px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+        transition: all 0.25s ease;
+    }
+    .material-swatch-card:hover {
+        border-color: rgba(99, 102, 241, 0.45);
+        transform: translateY(-2px);
+        box-shadow: 0 14px 32px rgba(99, 102, 241, 0.2);
+    }
+    .material-icon-bubble {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.7rem;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .material-details-title {
+        font-weight: 700;
+        font-size: 1.02rem;
+        color: #F8FAFC;
+    }
+    .material-details-price {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #38BDF8;
+    }
+    .material-details-desc {
+        font-size: 0.82rem;
+        color: #94A3B8;
+        margin-top: 3px;
+        line-height: 1.4;
+    }
+
     /* HUD Metrics Card */
     .hud-card {
-        background: linear-gradient(145deg, #0f172a, #1e293b);
-        border: 1px solid #334155;
-        border-radius: 14px;
-        padding: 20px;
+        background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.85));
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        border-radius: 18px;
+        padding: 24px;
         color: #f8fafc;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        margin-top: 12px;
-        margin-bottom: 16px;
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        margin-top: 14px;
+        margin-bottom: 18px;
     }
     .hud-header {
+        font-family: 'Outfit', sans-serif;
         font-size: 1.05rem;
         font-weight: 700;
         color: #38bdf8;
         display: flex;
         align-items: center;
-        margin-bottom: 14px;
+        gap: 8px;
+        margin-bottom: 16px;
         letter-spacing: 0.5px;
         text-transform: uppercase;
     }
@@ -131,67 +500,67 @@ st.markdown("""
     }
     .hud-stat-box {
         background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 16px 12px;
         text-align: center;
+        transition: all 0.2s ease;
+    }
+    .hud-stat-box:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(56, 189, 248, 0.3);
     }
     .hud-stat-val {
-        font-size: 1.35rem;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.45rem;
         font-weight: 700;
         color: #38bdf8;
     }
     .hud-stat-lbl {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         color: #94a3b8;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
         margin-top: 4px;
+        font-weight: 600;
     }
 
     /* Tier Badges */
     .tier-badge-budget {
-        background-color: #10b981;
+        background: linear-gradient(135deg, #059669, #10b981);
         color: white;
-        padding: 6px 14px;
+        padding: 6px 16px;
         border-radius: 12px;
         font-weight: 700;
         font-size: 0.95rem;
         display: inline-block;
-        text-align: center;
-        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
     }
     .tier-badge-mid {
-        background-color: #0284c7;
+        background: linear-gradient(135deg, #0284c7, #38bdf8);
         color: white;
-        padding: 6px 14px;
+        padding: 6px 16px;
         border-radius: 12px;
         font-weight: 700;
         font-size: 0.95rem;
         display: inline-block;
-        text-align: center;
-        box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
     }
     .tier-badge-luxury {
-        background: linear-gradient(135deg, #f59e0b, #d97706);
-        color: white;
-        padding: 6px 14px;
+        background: linear-gradient(135deg, #d97706, #fbbf24);
+        color: #0f172a;
+        padding: 6px 16px;
         border-radius: 12px;
-        font-weight: 700;
+        font-weight: 800;
         font-size: 0.95rem;
         display: inline-block;
-        text-align: center;
-        box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
     }
 
-    /* Section Subheaders */
-    .section-title {
-        font-size: 1.3rem;
-        font-weight: 700;
-        margin-top: 10px;
-        margin-bottom: 12px;
-        color: inherit;
-        border-left: 4px solid #3b82f6;
-        padding-left: 10px;
+    /* Sidebar Styling */
+    section[data-testid="stSidebar"] {
+        background-color: #0B1120 !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -206,37 +575,40 @@ if "logged_in" not in st.session_state:
 if "user" not in st.session_state:
     st.session_state.user = None
 
-# If not authenticated, display the OG Authentication Portal
+# If not authenticated, display the Luxury Authentication Suite
 if not st.session_state.logged_in:
-    # Header Banner
+    # Luxury Branded Welcome Header
     st.markdown("""
-    <div class="main-header-card" style="text-align: center; padding: 36px 20px;">
-        <div style="font-size: 2.8rem; margin-bottom: 8px;">🏡</div>
-        <div class="main-header-title">AI-GLAZE</div>
-        <div class="main-header-subtitle">AI-Powered Home Planning, Interior Architecture & Real Material Recommendation Platform</div>
-        <div style="margin-top: 12px;">
+    <div class="main-header-card" style="text-align: center; padding: 40px 24px;">
+        <div style="display: flex; justify-content: center; margin-bottom: 14px;">
+            <div class="brand-icon-box" style="width: 70px; height: 70px; font-size: 2.3rem;">🏡</div>
+        </div>
+        <div class="main-header-title">AI-GLAZE <span class="brand-badge" style="font-size: 0.85rem; padding: 4px 12px;">PRO STUDIO</span></div>
+        <div class="main-header-subtitle">Autonomous Spatial Perception, Generative Interior Architecture & Real Material Intelligence</div>
+        <div style="margin-top: 14px;">
             <span class="tag-pill">📐 Geometry-Preserved Redesign</span>
             <span class="tag-pill">💰 Indian Market BoQ (INR ₹)</span>
             <span class="tag-pill">🛒 Real Sourcing & Supplier Links</span>
             <span class="tag-pill">🏛️ Architect & Homeowner Portals</span>
+            <span class="tag-pill">⚡ Offline-Capable Neural Pipeline</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    auth_col1, auth_col2, auth_col3 = st.columns([1, 2, 1])
+    auth_col1, auth_col2, auth_col3 = st.columns([1, 2.2, 1])
 
     with auth_col2:
         auth_tab_login, auth_tab_reg = st.tabs(["🔐 Sign In to Workspace", "📝 Register New Account"])
 
         # TAB 1: SIGN IN
         with auth_tab_login:
-            st.markdown("#### Welcome Back")
-            st.caption("Sign in to access your spatial design workspace and saved project portfolios.")
+            st.markdown('<div class="section-title">🔐 Welcome Back</div>', unsafe_allow_html=True)
+            st.caption("Sign in to access your spatial design workspace, neural pipelines, and saved project portfolios.")
 
             with st.form("login_form"):
-                login_user = st.text_input("Username or Email", placeholder="e.g. architect@aiglaze.com or sanjana")
+                login_user = st.text_input("Username or Email", placeholder="e.g. sanjana or architect@aiglaze.com")
                 login_pwd = st.text_input("Password", type="password", placeholder="••••••••")
-                login_submitted = st.form_submit_button("Sign In to Dashboard", type="primary", use_container_width=True)
+                login_submitted = st.form_submit_button("Sign In to Studio Dashboard", type="primary", use_container_width=True)
 
             if login_submitted:
                 if AUTH_AVAILABLE:
@@ -253,18 +625,18 @@ if not st.session_state.logged_in:
                     st.error("Authentication module not loaded.")
 
             st.markdown("---")
-            st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem;'>⚡ Quick Demo Access for Faculty & Reviewers:</p>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center; color: #94A3B8; font-size: 0.88rem; font-weight: 600;'>⚡ One-Click Reviewer Access for Faculty & Reviewers:</p>", unsafe_allow_html=True)
             
             demo_col_a, demo_col_b = st.columns(2)
             with demo_col_a:
-                if st.button("📐 Demo: Architect Mode", use_container_width=True):
+                if st.button("📐 Demo: Architect Portal", use_container_width=True):
                     if AUTH_AVAILABLE:
                         _, _, user_data = auth_manager.authenticate_user("architect_demo", "demo123")
                         st.session_state.logged_in = True
                         st.session_state.user = user_data
                         st.rerun()
             with demo_col_b:
-                if st.button("🏠 Demo: Homeowner Mode", use_container_width=True):
+                if st.button("🏠 Demo: Homeowner Portal", use_container_width=True):
                     if AUTH_AVAILABLE:
                         _, _, user_data = auth_manager.authenticate_user("homeowner_demo", "demo123")
                         st.session_state.logged_in = True
@@ -273,8 +645,8 @@ if not st.session_state.logged_in:
 
         # TAB 2: REGISTER
         with auth_tab_reg:
-            st.markdown("#### Create Your AI-GLAZE Account")
-            st.caption("Join homeowners and licensed architects planning intelligent interiors.")
+            st.markdown('<div class="section-title">📝 Create Studio Account</div>', unsafe_allow_html=True)
+            st.caption("Join licensed architects and homeowners planning intelligent spaces.")
 
             with st.form("register_form"):
                 reg_name = st.text_input("Full Name", placeholder="e.g. Ar. Sanjana Hoskote")
@@ -286,14 +658,14 @@ if not st.session_state.logged_in:
                 
                 reg_col_c, reg_col_d = st.columns(2)
                 with reg_col_c:
-                    reg_role = st.selectbox("I am a:", ["Professional Architect", "Homeowner", "Interior Designer", "Contractor"])
+                    reg_role = st.selectbox("Professional Role:", ["Professional Architect", "Homeowner", "Interior Designer", "Contractor"])
                 with reg_col_d:
                     reg_city = st.text_input("City", value="Bangalore")
 
                 reg_pwd = st.text_input("Password", type="password", placeholder="••••••••")
                 reg_pwd_confirm = st.text_input("Confirm Password", type="password", placeholder="••••••••")
 
-                reg_submitted = st.form_submit_button("Create Account & Enter Platform", type="primary", use_container_width=True)
+                reg_submitted = st.form_submit_button("Create Account & Launch Workspace", type="primary", use_container_width=True)
 
             if reg_submitted:
                 if reg_pwd != reg_pwd_confirm:
@@ -325,51 +697,67 @@ user = st.session_state.user or {
     "full_name": "Ar. Sanjana Hoskote", "role": "Professional Architect", "city": "Bangalore", "id": 1
 }
 
-# User Status Header Bar
+# User Status Header Bar (Luxury Floating Dock)
 st.markdown(f"""
 <div class="user-profile-bar">
-    <div>
-        <strong>👤 {user['full_name']}</strong> &nbsp;|&nbsp; 
-        <span style="color: #38bdf8;">🏷️ {user['role']}</span> &nbsp;|&nbsp; 
-        <span>📍 {user.get('city', 'Bangalore')}</span>
+    <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #6366F1, #8B5CF6); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45); border: 1px solid rgba(255, 255, 255, 0.2);">👤</div>
+        <div>
+            <div style="font-weight: 700; font-size: 1.02rem; color: #F8FAFC;">
+                {user['full_name']} &nbsp;
+                <span style="font-size: 0.74rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.35);">
+                    🏷️ {user['role']}
+                </span>
+            </div>
+            <div style="font-size: 0.8rem; color: #94A3B8; margin-top: 2px;">
+                📍 {user.get('city', 'Bangalore')} • Department of AI & ML, MVJCE
+            </div>
+        </div>
     </div>
-    <div style="font-size: 0.85rem; color: #94a3b8;">
-        AI-GLAZE Workspace v2.4 (Indian Market Edition)
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="meta-pill"><span class="pulse-dot"></span> Studio Online</span>
+        <span class="meta-pill">v2.4 Pro</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Preset demo images if present
-DEMO_IMAGE_CANDIDATES = ["real_room.jpeg", "real_room.jpg", "test_room.jpg", "test_room.jpeg"]
-DEFAULT_IMAGE = None
-for candidate in DEMO_IMAGE_CANDIDATES:
-    if os.path.exists(candidate):
-        DEFAULT_IMAGE = candidate
-        break
+# Preset demo images if present (resolved against BASE_DIR without duplicates)
+DEMO_IMAGE_CANDIDATES = []
+for fname in ["real_room.jpeg", "test_room.jpg"]:
+    resolved_candidate = resolve_path(fname)
+    if os.path.exists(resolved_candidate) and resolved_candidate not in DEMO_IMAGE_CANDIDATES:
+        DEMO_IMAGE_CANDIDATES.append(resolved_candidate)
 
-if "current_image_path" not in st.session_state:
+DEFAULT_IMAGE = DEMO_IMAGE_CANDIDATES[0] if DEMO_IMAGE_CANDIDATES else None
+
+if "current_image_path" not in st.session_state or not st.session_state.current_image_path:
     st.session_state.current_image_path = DEFAULT_IMAGE
 
 if "depth_heatmap_path" not in st.session_state:
-    st.session_state.depth_heatmap_path = "depth_heatmap.png" if os.path.exists("depth_heatmap.png") else None
+    d_cand = resolve_path("depth_heatmap.png")
+    st.session_state.depth_heatmap_path = d_cand if os.path.exists(d_cand) else None
 
 if "structural_edges_path" not in st.session_state:
-    st.session_state.structural_edges_path = "structural_edges.png" if os.path.exists("structural_edges.png") else None
+    e_cand = resolve_path("structural_edges.png")
+    st.session_state.structural_edges_path = e_cand if os.path.exists(e_cand) else None
 
 if "spatial_metrics" not in st.session_state:
     st.session_state.spatial_metrics = None
 
 if "redesign_path" not in st.session_state:
-    st.session_state.redesign_path = "redesign_output.png" if os.path.exists("redesign_output.png") else None
+    r_cand = resolve_path("redesign_output.png")
+    st.session_state.redesign_path = r_cand if os.path.exists(r_cand) else None
 
 if "inpaint_path" not in st.session_state:
-    st.session_state.inpaint_path = "inpaint_output.png" if os.path.exists("inpaint_output.png") else None
+    i_cand = resolve_path("inpaint_output.png")
+    st.session_state.inpaint_path = i_cand if os.path.exists(i_cand) else None
 
 if "detected_objects" not in st.session_state:
     st.session_state.detected_objects = None
 
 if "detected_objects_path" not in st.session_state:
-    st.session_state.detected_objects_path = "detected_objects.png" if os.path.exists("detected_objects.png") else None
+    do_cand = resolve_path("detected_objects.png")
+    st.session_state.detected_objects_path = do_cand if os.path.exists(do_cand) else None
 
 if "active_preview_mode" not in st.session_state:
     st.session_state.active_preview_mode = "✨ Style Redesign"
@@ -456,14 +844,18 @@ with st.sidebar:
 # 5. MAIN HEADER CARD & PLATFORM TABS
 # =====================================================================
 st.markdown("""
-<div class="main-header-card">
-    <div class="main-header-title">AI-GLAZE</div>
-    <div class="main-header-subtitle">Plan it. Design it. Source it. Budget it!</div>
-    <div>
-        <span class="tag-pill">Showstopper 1: Magic Wand Inpainting</span>
-        <span class="tag-pill">Showstopper 2: Knapsack BoQ Shockwave</span>
-        <span class="tag-pill">Showstopper 3: AI Vision Mode</span>
-        <span class="tag-pill">Showstopper 4: YOLOv8 Spatial Pins</span>
+<div class="studio-header">
+    <div class="studio-brand-group">
+        <div class="brand-icon-box">🏡</div>
+        <div>
+            <div class="brand-title">AI-GLAZE <span class="brand-badge">PRO ARCHITECTURE</span></div>
+            <div class="brand-tagline">Autonomous Spatial Perception, Generative Interior Architecture & Real Material Intelligence</div>
+        </div>
+    </div>
+    <div class="studio-meta-badges">
+        <div class="meta-pill"><span class="pulse-dot"></span> Neural Vision Mode Active</div>
+        <div class="meta-pill">🇮🇳 Indian Market (INR ₹)</div>
+        <div class="meta-pill">🏛️ VTU / MVJCE Capstone</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -512,12 +904,19 @@ with tab_contractor_report:
     st.markdown('<div class="section-title">📄 Contractor Specification Sheet & Bill of Quantities</div>', unsafe_allow_html=True)
     st.caption("Exportable itemized architectural report with 10% wastage buffers and local supplier procurement details.")
 
-    report_path = "contractor_boq_report.html"
+    report_path = resolve_path("contractor_boq_report.html")
     if os.path.exists(report_path):
         with open(report_path, "r", encoding="utf-8") as f:
             html_content = f.read()
 
         col_rep1, col_rep2 = st.columns([3, 1])
+        with col_rep1:
+            st.markdown("""
+            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 12px 18px; margin-bottom: 14px;">
+                <span style="color: #34D399; font-weight: 700;">✅ Certified BoQ Specification Document</span> &nbsp;|&nbsp; 
+                <span style="color: #CBD5E1; font-size: 0.88rem;">10% Wastage Buffers Applied • Kajaria & Asian Paints Supply SKUs</span>
+            </div>
+            """, unsafe_allow_html=True)
         with col_rep2:
             st.download_button(
                 "⬇️ Download Official BoQ Report (HTML)",
@@ -540,7 +939,7 @@ with tab_workspace:
     # -------------------------------------------------------------
     # 5.1 Image Intake
     # -------------------------------------------------------------
-    st.markdown('<div class="section-title">📸 Step 1: Room Imagery Intake</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"><span class="step-badge">1</span> Room Imagery Intake & Spatial Preprocessing</div>', unsafe_allow_html=True)
     
     col_upload, col_preset = st.columns([2, 1])
     
@@ -551,20 +950,24 @@ with tab_workspace:
             help="High-resolution monocular room photo taken from eye level"
         )
         if uploaded_file is not None:
-            uploaded_save_path = "uploaded_room_temp.jpg"
+            uploaded_save_path = resolve_path("uploaded_room_temp.jpg")
             img_bytes = uploaded_file.read()
             with open(uploaded_save_path, "wb") as f:
                 f.write(img_bytes)
             st.session_state.current_image_path = uploaded_save_path
     
     with col_preset:
-        st.markdown("**Quick Preset Demos:**")
-        preset_cols = st.columns(len(DEMO_IMAGE_CANDIDATES))
-        for idx, candidate in enumerate(DEMO_IMAGE_CANDIDATES):
-            if os.path.exists(candidate):
-                if preset_cols[idx].button(f"Use {candidate}", key=f"btn_preset_{idx}"):
-                    st.session_state.current_image_path = candidate
-                    st.rerun()
+        st.markdown("**Quick Preset Spaces:**")
+        preset_labels = {
+            "real_room.jpeg": "🛋️ Scandinavian Lounge",
+            "test_room.jpg": "🏡 Modern Living Room"
+        }
+        for idx, resolved_p in enumerate(DEMO_IMAGE_CANDIDATES):
+            base_fname = os.path.basename(resolved_p)
+            btn_lbl = preset_labels.get(base_fname, f"🛋️ Preset Space ({base_fname})")
+            if st.button(btn_lbl, key=f"btn_preset_{idx}", use_container_width=True):
+                st.session_state.current_image_path = resolved_p
+                st.rerun()
 
     current_img = st.session_state.current_image_path
     if not current_img or not os.path.exists(current_img):
@@ -576,7 +979,7 @@ with tab_workspace:
     # -------------------------------------------------------------
     # 5.2 Showstopper #3: AI Vision Mode Toggle
     # -------------------------------------------------------------
-    st.markdown('<div class="section-title">🔬 Step 2: Spatial Perception & "AI Vision Mode"</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"><span class="step-badge">2</span> Spatial Perception & Neural Vision HUD</div>', unsafe_allow_html=True)
     
     vision_toggle_col, _ = st.columns([2, 2])
     with vision_toggle_col:
@@ -653,7 +1056,7 @@ with tab_workspace:
     # -------------------------------------------------------------
     # 5.3 Showstopper #1: Redesign & Inpainting
     # -------------------------------------------------------------
-    st.markdown('<div class="section-title">🪄 Step 3: Architecture-Conditioned Redesign & Magic Wand Inpainting</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"><span class="step-badge">3</span> Architecture-Conditioned Redesign & Magic Wand Inpainting</div>', unsafe_allow_html=True)
     st.caption("ControlNet locks the room geometry while localized inpainting swaps target surface materials on demand.")
 
     redesign_col_controls, redesign_col_view = st.columns([1, 1])
@@ -679,6 +1082,23 @@ with tab_workspace:
             "Action TESA Engineered Oak Wood",
             "Asian Paints Royale Velvet Texture"
         ])
+
+        material_specs = {
+            "Italian Carrara Marble": ("🏛️", "Italian Carrara Marble", "₹380 / sq.ft", "Polished luxury pearl-white surface with organic grey-blue veining."),
+            "Kajaria Double-Charged Vitrified Tile": ("🧱", "Kajaria Vitrified Tiles", "₹75 / sq.ft", "High-gloss porcelain finish with laser-cut 2mm grout grid."),
+            "Action TESA Engineered Oak Wood": ("🪵", "Action TESA Oak Wood", "₹175 / sq.ft", "Warm golden-honey oak planks with micro-beveled seams."),
+            "Asian Paints Royale Velvet Texture": ("🎨", "Asian Paints Royale Velvet", "₹28 / sq.ft", "Luxury velvet sheen with low-VOC Teflon surface protection.")
+        }
+        m_icon, m_title, m_price, m_desc = material_specs.get(new_material, ("✨", new_material, "Catalog Rate", "Verified Indian supplier SKU."))
+        st.markdown(f"""
+        <div class="material-swatch-card">
+            <div class="material-icon-bubble">{m_icon}</div>
+            <div>
+                <div class="material-details-title">{m_title} &nbsp;<span class="material-details-price">{m_price}</span></div>
+                <div class="material-details-desc">{m_desc}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
         if st.button("✨ Inpaint Surface Only", use_container_width=True):
             if VISION_ENGINE_AVAILABLE:
@@ -740,14 +1160,14 @@ with tab_workspace:
     # -------------------------------------------------------------
     # 5.4 Showstopper #4: YOLOv8 Furniture Detection & Pins
     # -------------------------------------------------------------
-    st.markdown('<div class="section-title">📍 Step 4: YOLOv8 Furniture Detection & Spatial Pins</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"><span class="step-badge">4</span> YOLOv8 Furniture Localization & Spatial Pins</div>', unsafe_allow_html=True)
     
     if st.button("📍 Detect Furniture Objects & Interactive Pins", use_container_width=True):
         if VISION_ENGINE_AVAILABLE:
             with st.spinner("Running YOLOv8 neural network inference for furniture localization..."):
                 items = vision_engine.detect_furniture_objects(current_img)
                 st.session_state.detected_objects = items
-                st.session_state.detected_objects_path = "detected_objects.png"
+                st.session_state.detected_objects_path = resolve_path("detected_objects.png")
                 st.rerun()
 
     det_col_img, det_col_table = st.columns([1, 1])
@@ -781,7 +1201,19 @@ with tab_workspace:
     # -------------------------------------------------------------
     # 5.5 Portfolio Save Action
     # -------------------------------------------------------------
-    st.markdown('<div class="section-title">💾 Step 5: Save Project to Portfolio</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"><span class="step-badge">5</span> Save Project to Persistent Portfolio</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="glass-card" style="padding: 22px 24px; margin-top: 10px;">
+        <div style="font-weight: 700; color: #F8FAFC; font-size: 1.05rem; margin-bottom: 4px;">
+            💼 Store Session in Architect & Client Portfolio
+        </div>
+        <div style="font-size: 0.85rem; color: #94A3B8; margin-bottom: 16px;">
+            Saves high-resolution synthesis renders, localized inpaint maps, YOLO inventory, and BoQ calculations to your SQLite project history.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     save_col_name, save_col_btn = st.columns([3, 1])
     with save_col_name:
         save_p_name = st.text_input("Project Name:", value=f"Living Room Design - {selected_style}")
