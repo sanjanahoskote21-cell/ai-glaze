@@ -1,4 +1,4 @@
-"""
+s"""
 AI-GLAZE - Cost Estimation, Bill of Quantities (BoQ) & Budget Optimization Engine
 Module: cost_engine.py
 Author: Teammate C (Member 4: Cost Engineering, BoQ & Reports Lead)
