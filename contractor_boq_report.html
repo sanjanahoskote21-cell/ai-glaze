@@ -22,7 +22,7 @@
         }
         
         .report-wrapper {
-            max-width: 960px;
+            max-width: 980px;
             margin: 0 auto;
             background: #ffffff;
             border-radius: 16px;
@@ -89,7 +89,7 @@
         
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
             gap: 16px;
             margin-bottom: 32px;
         }
@@ -99,19 +99,18 @@
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             padding: 18px 20px;
-            transition: all 0.2s ease;
         }
         
         .kpi-label {
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #64748b;
         }
         
         .kpi-value {
-            font-size: 22px;
+            font-size: 21px;
             font-weight: 800;
             color: #0f172a;
             margin-top: 6px;
@@ -151,7 +150,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
         
         .boq-table th {
@@ -172,7 +171,7 @@
         }
         
         .summary-table {
-            width: 360px;
+            width: 400px;
             border-collapse: collapse;
             font-size: 14px;
         }
@@ -184,12 +183,113 @@
         
         .grand-total-row td {
             padding: 12px;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 800;
             color: #0f172a;
             border-top: 2px solid #0f172a;
             border-bottom: 2px solid #0f172a;
             background: #f8fafc;
+        }
+
+        .exec-reasoning-banner {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            color: #1e3a8a;
+            margin-bottom: 16px;
+        }
+
+        .reasoning-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .reasoning-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px 18px;
+        }
+
+        .reasoning-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .reasoning-head h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 4px;
+        }
+
+        .cat-tag {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #4f46e5;
+            background: #eef2ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .score-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0369a1;
+            background: #e0f2fe;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .why-text {
+            font-size: 13.5px;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .climate-line {
+            font-size: 12.5px;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .metrics-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .metric-chip {
+            font-size: 11px;
+            color: #334155;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        .cuts-box {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 28px;
+        }
+
+        .cuts-box h3 {
+            color: #065f46;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
         
         .spec-box {
@@ -267,16 +367,11 @@
             font-size: 13px;
             font-weight: 600;
             border: none;
-            transition: all 0.2s;
         }
         
         .btn-print {
             background: #0f172a;
             color: #ffffff;
-        }
-        
-        .btn-print:hover {
-            background: #334155;
         }
         
         @media print {
@@ -301,14 +396,18 @@
         <div class="header-bar">
             <div class="header-top">
                 <div>
-                    <div class="brand-badge">⚡ AI-GLAZE SPATIAL ARCHITECTURE</div>
+                    <div class="brand-badge">⚡ AI-GLAZE SPATIAL ARCHITECTURE &amp; MATERIAL INTELLIGENCE</div>
                     <h1 class="title-h1">Contractor Bill of Quantities (BoQ)</h1>
-                    <div class="subtitle">AI-GLAZE Smart Interior Fit-out &bull; Space: <strong>Executive Master Bedroom (15x12)</strong></div>
+                    <div class="subtitle">
+                        AI-GLAZE Smart Architectural & Interior BoQ &bull;
+                        <strong>Full Floorplan (792 sq.ft Carpet | 30x40 ft Plot)</strong> &bull;
+                        City: <strong>Bangalore</strong>
+                    </div>
                 </div>
                 <div class="doc-meta">
                     <div>DOC REF: AGY-BOQ-2026-X</div>
-                    <div>DATE: 2026-10-24 23:01:22</div>
-                    <div>LEAD: Teammate C (Cost Engineering)</div>
+                    <div>DATE: 2026-11-26 19:19:14</div>
+                    <div>SCOPE: Interior Finishing & Renovation</div>
                 </div>
             </div>
         </div>
@@ -321,32 +420,37 @@
             <!-- KPI CARDS -->
             <div class="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-label">Flooring Area (Billable)</div>
-                    <div class="kpi-value">198.0 <span style="font-size: 14px; font-weight: normal;">sq.ft</span></div>
+                    <div class="kpi-label">Carpet Area</div>
+                    <div class="kpi-value">792.0 <span style="font-size: 14px; font-weight: normal;">sq.ft</span></div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 4px;">30x40 ft</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Flooring (Billable)</div>
+                    <div class="kpi-value">871.2 <span style="font-size: 14px; font-weight: normal;">sq.ft</span></div>
                     <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Includes 10% cutting waste</div>
                 </div>
                 <div class="kpi-card">
                     <div class="kpi-label">Wall Paintable Area</div>
-                    <div class="kpi-value">495.0 <span style="font-size: 14px; font-weight: normal;">sq.ft</span></div>
-                    <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Net after window/door voids</div>
+                    <div class="kpi-value">2,120.6 <span style="font-size: 14px; font-weight: normal;">sq.ft</span></div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Net after openings</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-label">Client Budget Ceiling</div>
-                    <div class="kpi-value">₹135,000.00</div>
-                    <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Benchmark Target</div>
+                    <div class="kpi-label">Total (Incl. 18% GST)</div>
+                    <div class="kpi-value">₹620,129</div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Cap: ₹900,000</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-label">Status & Delta</div>
+                    <div class="kpi-label">Budget Status</div>
                     <div class="status-pill">Within Budget</div>
-                    <div style="font-size: 13px; font-weight: 700; color: #0f172a; margin-top: 6px;">
-                        Savings: ₹7,980.24
+                    <div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-top: 6px;">
+                        Savings: ₹279,871
                     </div>
                 </div>
             </div>
 
             <!-- ITEMIZED BOQ TABLE -->
             <div class="section-header">
-                <h2 class="section-title">Itemized Scope of Works & Material Schedule</h2>
+                <h2 class="section-title">Itemized Scope of Works &amp; Material Schedule</h2>
                 <span style="font-size: 12px; color: #64748b; font-family: 'JetBrains Mono', monospace;">IS 1200 STANDARDS APPLIED</span>
             </div>
 
@@ -354,7 +458,7 @@
                 <thead>
                     <tr>
                         <th style="width: 10%;">Item ID</th>
-                        <th style="width: 45%; text-align: left;">Scope & Specification Description</th>
+                        <th style="width: 45%; text-align: left;">Scope &amp; Specification Description</th>
                         <th style="width: 15%; text-align: center;">Quantity</th>
                         <th style="width: 15%; text-align: right;">Unit Rate</th>
                         <th style="width: 15%; text-align: right;">Subtotal</th>
@@ -366,55 +470,66 @@
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #1e293b;">BOQ-001</td>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">
                 <div style="font-weight: 600; color: #0f172a;">Flooring & Substrate</div>
-                <div style="font-size: 13px; color: #64748b; margin-top: 2px;">Engineered Oak Hardwood Flooring (Inc. 10% cutting wastage & grout laying)</div>
+                <div style="font-size: 13px; color: #64748b; margin-top: 2px;">Kajaria GVT Vitrified Tile (Inc. 10% cutting wastage & grout laying)</div>
             </td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">198.0 sq.ft</td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #334155;">₹150.00</td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #0f172a;">₹29,700.00</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">871.2 sq.ft</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #334155;">₹75.00</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #0f172a;">₹65,340.00</td>
         </tr>
         
         <tr>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #1e293b;">BOQ-002</td>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">
                 <div style="font-weight: 600; color: #0f172a;">Wall Surface Finishing</div>
-                <div style="font-size: 13px; color: #64748b; margin-top: 2px;">Royal Luxury Silk Emulsion (Teflon Coated) (Surface prep, primer + 2 topcoats)</div>
+                <div style="font-size: 13px; color: #64748b; margin-top: 2px;">Asian Paints Royale Luxury Emulsion (Surface prep, primer + 2 topcoats)</div>
             </td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">495.0 sq.ft</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">2,120.6 sq.ft</td>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #334155;">₹38.00</td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #0f172a;">₹18,810.00</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #0f172a;">₹80,582.04</td>
         </tr>
         
         <tr>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #1e293b;">BOQ-003</td>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">
                 <div style="font-weight: 600; color: #0f172a;">Furniture & Modular Fixtures</div>
-                <div style="font-size: 13px; color: #64748b; margin-top: 2px;">Solid Oak & High-Density Performance Fabric Package (Factory assembled & site anchored)</div>
+                <div style="font-size: 13px; color: #64748b; margin-top: 2px;">CenturyPly Modular BWP/MR Ply & HPL Laminate (Factory assembled & site anchored)</div>
             </td>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">1.0 lot</td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #334155;">₹59,500.00</td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #0f172a;">₹59,500.00</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #334155;">₹209,880.00</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #0f172a;">₹209,880.00</td>
         </tr>
         
         <tr>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #1e293b;">BOQ-004</td>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">
-                <div style="font-weight: 600; color: #0f172a;">Skilled Craftsmanship & Labor</div>
-                <div style="font-size: 13px; color: #64748b; margin-top: 2px;">Site supervision, masonry alignment & installation labor (12%)</div>
+                <div style="font-weight: 600; color: #0f172a;">Electrical & Plumbing Upgrades (MEP)</div>
+                <div style="font-size: 13px; color: #64748b; margin-top: 2px;">Modular Switches, FRLS Rewiring Points & CP Sanitary Fixture Upgrades</div>
             </td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">1.0 service</td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #334155;">₹12,961.20</td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #0f172a;">₹12,961.20</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">792.0 sq.ft</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #334155;">₹115.00</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #0f172a;">₹91,080.00</td>
         </tr>
         
         <tr>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #1e293b;">BOQ-005</td>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">
+                <div style="font-weight: 600; color: #0f172a;">Skilled Craftsmanship & Labor</div>
+                <div style="font-size: 13px; color: #64748b; margin-top: 2px;">Site supervision, masonry alignment & installation labor (12%)</div>
+            </td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">1.0 service</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #334155;">₹53,625.84</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #0f172a;">₹53,625.84</td>
+        </tr>
+        
+        <tr>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #1e293b;">BOQ-006</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">
                 <div style="font-weight: 600; color: #0f172a;">Engineering Contingency</div>
                 <div style="font-size: 13px; color: #64748b; margin-top: 2px;">Safety buffer for site unforeseen deviations & material escalations (5%)</div>
             </td>
             <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">1.0 allowance</td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #334155;">₹6,048.56</td>
-            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #0f172a;">₹6,048.56</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #334155;">₹25,025.39</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #0f172a;">₹25,025.39</td>
         </tr>
         
                 </tbody>
@@ -424,32 +539,109 @@
             <div class="summary-box">
                 <table class="summary-table">
                     <tr>
-                        <td style="color: #64748b;">Direct Materials & Package Total:</td>
-                        <td style="text-align: right; font-weight: 600;">₹108,010.00</td>
+                        <td style="color: #64748b;">Direct Materials &amp; Package Total:</td>
+                        <td style="text-align: right; font-weight: 600;">₹446,882.04</td>
                     </tr>
                     <tr>
-                        <td style="color: #64748b;">Installation & Craftsmanship Buffer (12%):</td>
-                        <td style="text-align: right; font-weight: 600;">₹12,961.20</td>
+                        <td style="color: #64748b;">Installation &amp; Craftsmanship Buffer (12%):</td>
+                        <td style="text-align: right; font-weight: 600;">₹53,625.84</td>
                     </tr>
                     <tr>
-                        <td style="color: #64748b;">Site Contingency & Escalation Buffer (5%):</td>
-                        <td style="text-align: right; font-weight: 600;">₹6,048.56</td>
+                        <td style="color: #64748b;">Site Contingency &amp; Escalation (5%):</td>
+                        <td style="text-align: right; font-weight: 600;">₹25,025.39</td>
+                    </tr>
+                    <tr>
+                        <td style="color: #334155; font-weight: 600;">Pre-GST Construction Subtotal:</td>
+                        <td style="text-align: right; font-weight: 700;">₹525,533.27</td>
+                    </tr>
+                    <tr>
+                        <td style="color: #64748b;">Statutory Indian GST (18%):</td>
+                        <td style="text-align: right; font-weight: 600;">₹94,595.99</td>
                     </tr>
                     <tr class="grand-total-row">
-                        <td>Grand Total (INR):</td>
-                        <td style="text-align: right; color: #0f172a;">₹127,019.76</td>
+                        <td>Grand Total (INR Incl. 18% GST):</td>
+                        <td style="text-align: right; color: #0f172a;">₹620,129.26</td>
                     </tr>
                 </table>
             </div>
 
+            
+            <div class="section-header" style="margin-top: 8px;">
+                <h2 class="section-title">🧠 Material Intelligence & Architectural Reasoning Notes</h2>
+                <span style="font-size: 12px; color: #64748b; font-family: 'JetBrains Mono', monospace;">PILLARS 4 &amp; 6</span>
+            </div>
+            <div class="exec-reasoning-banner">For this 792 sq.ft carpet area layout in Bangalore, the material schedule balances climate resilience, low-VOC indoor air safety, and IS-code durability (Composite Durability Score: 91.0/100). Total estimate is ₹620,129.26 (inclusive of 18% statutory GST of ₹94,595.99).</div>
+            <div class="reasoning-grid">
+            <div class="reasoning-card">
+                <div class="reasoning-head">
+                    <div>
+                        <span class="cat-tag">Flooring</span>
+                        <h4>Kajaria GVT Vitrified Tile</h4>
+                    </div>
+                    <span class="score-badge">Durability: 94/100</span>
+                </div>
+                <p class="why-text">Why Kajaria GVT Vitrified Tile was chosen: High thermal reflectance for Bangalore's climate, 0.05% low water absorption, scratch resistance (Mohs 6-7), and ₹75/sq.ft cost-effectiveness compared to Italian Statuario Marble (₹380/sq.ft).</p>
+                <div class="climate-line"><strong>Climate Fit (Bangalore):</strong> High thermal reflectance for Bangalore's climate and 0.05% water absorption handles monsoon dampness effortlessly.</div>
+                <div class="metrics-row"><span class='metric-chip'><strong>Thermal Reflectance:</strong> High thermal reflectance (light-bodied glazed surface reduces indoor heat gain)</span><span class='metric-chip'><strong>Water Absorption:</strong> 0.05% (IS 15622)</span><span class='metric-chip'><strong>Scratch & Abrasion Resistance:</strong> Mohs 6-7 / PEI Class IV-V high abrasion & scratch resistance</span><span class='metric-chip'><strong>Durability Score:</strong> 94/100</span><span class='metric-chip'><strong>Standard:</strong> IS 15622 (Group BIa Porcelain Vitrified Tiles)</span></div>
+            </div>
+            
+            <div class="reasoning-card">
+                <div class="reasoning-head">
+                    <div>
+                        <span class="cat-tag">Painting</span>
+                        <h4>Asian Paints Royale Luxury Emulsion</h4>
+                    </div>
+                    <span class="score-badge">Durability: 93/100</span>
+                </div>
+                <p class="why-text">Why Asian Paints Royale Luxury Emulsion was chosen: Low VOC (environmentally safe, <5 g/L), Teflon surface protector with high scrub resistance, and anti-fungal shield tailored for Bangalore's climate.</p>
+                <div class="climate-line"><strong>Climate Fit (Bangalore):</strong> Anti-fungal barrier and Teflon stain guard protect walls through Bangalore's monsoon humidity.</div>
+                <div class="metrics-row"><span class='metric-chip'><strong>VOC Safety:</strong> Low VOC (<5 g/L, environmentally safe & GreenPro certified)</span><span class='metric-chip'><strong>Scrub Resistance:</strong> High scrub resistance (>10,000 wet scrub cycles, Class 1 washability)</span><span class='metric-chip'><strong>Surface Protection:</strong> Teflon surface protector repels household stains, grease, and microbial growth</span><span class='metric-chip'><strong>Durability Score:</strong> 93/100</span><span class='metric-chip'><strong>Standard:</strong> IS 15489 / IGBC GreenPro Low-VOC Standard</span></div>
+            </div>
+            
+            <div class="reasoning-card">
+                <div class="reasoning-head">
+                    <div>
+                        <span class="cat-tag">Furniture</span>
+                        <h4>CenturyPly Modular BWP/MR Ply & HPL Laminate</h4>
+                    </div>
+                    <span class="score-badge">Durability: 85/100</span>
+                </div>
+                <p class="why-text">Why CenturyPly Modular BWP/MR Ply & HPL Laminate was chosen: Chosen for factory-calibrated IS:710/303 plywood carcass, scratch-proof 1mm HPL laminate, and zero-maintenance wipe-clean surfaces. Suitable for Full Floorplan (792 sq.ft Carpet | 30x40 ft Plot) in Bangalore.</p>
+                <div class="climate-line"><strong>Climate Fit (Bangalore):</strong> 1mm high-pressure laminate (HPL) seals edges against monsoon humidity and scratches.</div>
+                <div class="metrics-row"><span class='metric-chip'><strong>Core Specification:</strong> IS:710 BWP wet-zone carcass + IS:303 MR dry-zone ply with 1mm Merino/Greenlam HPL</span><span class='metric-chip'><strong>Hardware & Fittings:</strong> Hettich soft-close hinges & telescopic channels with 2mm PVC edge banding</span><span class='metric-chip'><strong>Durability Score:</strong> 85/100</span><span class='metric-chip'><strong>Standard:</strong> IS 710 / IS 303 / IS 2046 (HPL Laminates)</span></div>
+            </div>
+            
+            <div class="reasoning-card">
+                <div class="reasoning-head">
+                    <div>
+                        <span class="cat-tag">Electrical & Plumbing (MEP)</span>
+                        <h4>Finolex FRLS Wiring + Astral CPVC/UPVC + Jaquar Fittings</h4>
+                    </div>
+                    <span class="score-badge">Durability: 92/100</span>
+                </div>
+                <p class="why-text">Why FRLS Copper & Astral CPVC were chosen: Flame-Retardant Low-Smoke (FRLS) insulation prevents toxic smoke during short-circuits, while lead-free CPVC handles hot-water lines up to 93°C without scale buildup.</p>
+                <div class="climate-line"><strong>Climate Fit (Bangalore):</strong> Corrosion-proof CPVC resists hard-water scaling common in Bangalore borewell/municipal supplies.</div>
+                <div class="metrics-row"><span class='metric-chip'><strong>Wiring Safety:</strong> 99.97% Electrolytic Copper FRLS (IS 694)</span><span class='metric-chip'><strong>Plumbing Spec:</strong> SDR-11 Lead-Free CPVC (IS 15778)</span><span class='metric-chip'><strong>Protection:</strong> RCCB 30mA + Surge Protection</span></div>
+            </div>
+            </div>
+        
+
+            
+            <div class="cuts-box">
+                <h3>💡 Budget Trade-Off Advisor (Target Reduction: ₹25,000)</h3>
+                <p style="font-size: 13px; color: #065f46; margin-bottom: 10px;">To cut at least ₹25,000: Switching flooring from Italian Statuario Marble (₹380/sq.ft) to Kajaria GVT Vitrified Tile (₹75/sq.ft) saves ₹265,716 in direct material cost (₹368,729 total BoQ savings incl. labor & 18% GST) without compromising durability. Revised BoQ Total drops from ₹988,858.04 to ₹620,129.26 (Total reduction: ₹368,728.78).</p>
+                <ul style="padding-left: 18px; font-size: 13px; color: #064e3b; line-height: 1.6;"><li><strong>Flooring & Substrate:</strong> Switching flooring from Italian Statuario Marble (₹380/sq.ft) to Kajaria GVT Vitrified Tile (₹75/sq.ft) saves ₹265,716 in direct material cost (₹368,729 total BoQ savings incl. labor & 18% GST) without compromising durability.</li></ul>
+            </div>
+        
+
             <!-- ARCHITECTURAL SPECIFICATION NOTES -->
             <div class="spec-box">
-                <h3>📌 Architectural Specifications & Supplier Standards</h3>
+                <h3>📌 Architectural Specifications &amp; Supplier Standards</h3>
                 <div class="spec-grid">
-                    <div><strong>Flooring Spec:</strong> Engineered Oak Hardwood Flooring</div>
-                    <div><strong>Wall Finishing:</strong> Royal Luxury Silk Emulsion (Teflon Coated)</div>
-                    <div><strong>Cabinetry & Joinery:</strong> Solid Oak & High-Density Performance Fabric Package</div>
-                    <div><strong>Quality Seal:</strong> ISO 9001 / GreenPro Low-VOC Certified</div>
+                    <div><strong>Flooring Spec:</strong> Kajaria GVT Vitrified Tile</div>
+                    <div><strong>Wall Finishing:</strong> Asian Paints Royale Luxury Emulsion</div>
+                    <div><strong>Cabinetry &amp; Joinery:</strong> CenturyPly Modular BWP/MR Ply & HPL Laminate</div>
+                    <div><strong>Quality Seal:</strong> ISO 9001 / IGBC GreenPro Low-VOC Certified</div>
                 </div>
             </div>
 
@@ -457,21 +649,20 @@
             <div class="signoff-section">
                 <div class="signoff-box">
                     <div style="font-size: 13px; color: #64748b;">Certified Field Contractor</div>
-                    <div class="signoff-line">Authorized Signatory & Stamp</div>
+                    <div class="signoff-line">Authorized Signatory &amp; Stamp</div>
                 </div>
                 <div class="signoff-box">
                     <div style="font-size: 13px; color: #64748b;">Client Approval / Architecture Lead</div>
-                    <div class="signoff-line">Authorized Signatory & Date</div>
+                    <div class="signoff-line">Authorized Signatory &amp; Date</div>
                 </div>
             </div>
 
             <!-- DISCLAIMER -->
             <div class="disclaimer">
-                <strong>ENGINEERING & STATUTORY NOTICE:</strong> This Bill of Quantities (BoQ) is algorithmically generated by the AI-GLAZE Computational Cost Engine based on spatial segmentation data provided by the Vision Processing Module. All measurements include standard statutory cutting/wastage allowances compliant with IS 1200 architectural norms. Rates are subject to local supply chain fluctuations and final structural verification by the on-site MEP engineer before tender contract execution.
+                <strong>ENGINEERING &amp; STATUTORY NOTICE:</strong> This Bill of Quantities (BoQ) is algorithmically generated by the AI-GLAZE Computational Cost &amp; Material Reasoning Engine based on floorplan area data. All measurements include standard statutory cutting/wastage allowances compliant with IS 1200 architectural norms and include 18% GST. Rates are subject to local supply chain fluctuations and final structural verification by the on-site MEP engineer before tender contract execution.
             </div>
         </div>
     </div>
 
 </body>
 </html>
-................
