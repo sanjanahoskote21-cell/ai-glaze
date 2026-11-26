@@ -8,8 +8,6 @@ Project: AI-GLAZE - Intelligent Home Planning & Interior Platform
 
 "Plan it. Design it. Source it. Budget it!"
 
-
-
 Features:
 
   - OG Authentication Portal: Login, Registration, and Role-Based Access (Homeowner vs. Architect)
@@ -34,8 +32,6 @@ Features:
 
 """
 
-
-
 import os
 
 import io
@@ -48,13 +44,9 @@ import pandas as pd
 
 import streamlit as st
 
-
-
 # Directory Anchor for absolute asset resolution regardless of launch cwd
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-
 
 def resolve_path(rel_path):
 
@@ -69,8 +61,6 @@ def resolve_path(rel_path):
     abs_p = os.path.join(BASE_DIR, rel_path)
 
     return abs_p if os.path.exists(abs_p) else os.path.join(BASE_DIR, rel_path)
-
-
 
 # Safe import of vision_engine written by Tech Lead (Member 1)
 
@@ -92,8 +82,6 @@ except Exception as err:
 
     VISION_ERROR_MSG = str(err)
 
-
-
 # Safe import of auth_manager
 
 try:
@@ -105,8 +93,6 @@ try:
 except Exception as err:
 
     AUTH_AVAILABLE = False
-
-
 
 # Safe import of Pillars 4 & 6 (cost_engine & reasoning_engine)
 
@@ -143,10 +129,6 @@ except Exception as err:
     LAYOUT_AVAILABLE = False
     LAYOUT_ERROR_MSG = str(err)
 
-
-
-
-
 # =====================================================================
 
 # 1. STREAMLIT PAGE CONFIGURATION & CUSTOM STYLING
@@ -165,1011 +147,726 @@ st.set_page_config(
 
 )
 
-
-
-# Custom CSS for Modern Luxury Glassmorphism & High-End Architecture Studio UI
-
+# Custom CSS for Editorial Luxury Architectural Studio (Havenly / Aura Studios / DreamHome Aesthetic)
 st.markdown("""
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-
-
-    /* Global Typography & Deep Luxury Architectural Canvas */
-
-    html, body, [class*="css"] {
-
-        font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-
-        color: #F1F5F9;
-
+    /* Global Warm Architectural Canvas */
+    html, body, [class*="css"], .stApp {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        background-color: #FAF8F5 !important;
+        color: #1C1917 !important;
     }
 
-
-
-    h1, h2, h3, h4, .brand-title, .main-header-title {
-
-        font-family: 'Outfit', sans-serif !important;
-
+    /* Editorial Serif Headings */
+    h1, h2, h3, .hero-headline, .brand-title, .main-header-title, .collection-title {
+        font-family: 'Playfair Display', Georgia, serif !important;
+        color: #1C1917 !important;
         letter-spacing: -0.02em;
-
     }
 
-
-
-    /* Ambient Architectural Grid & Mesh Background */
-
-    .stApp {
-
-        background: 
-
-            radial-gradient(circle at 12% 18%, rgba(99, 102, 241, 0.18) 0%, transparent 45%),
-
-            radial-gradient(circle at 88% 82%, rgba(14, 165, 233, 0.15) 0%, transparent 45%),
-
-            radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.10) 0%, transparent 60%),
-
-            linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-
-            linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-
-            #080C15 !important;
-
-        background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px, 100% 100% !important;
-
+    /* Subheadings and Eyebrows */
+    .eyebrow-tag {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #B45309;
+        margin-bottom: 8px;
+        display: inline-block;
     }
 
-
-
-    /* Luxury Studio Navigation Header */
-
+    /* Studio Header Navigation Bar */
     .studio-header {
-
-        background: rgba(15, 23, 42, 0.78);
-
-        backdrop-filter: blur(24px);
-
-        -webkit-backdrop-filter: blur(24px);
-
-        border: 1px solid rgba(255, 255, 255, 0.12);
-
+        background: #FFFFFF;
+        border: 1px solid rgba(28, 25, 23, 0.08);
         border-radius: 20px;
-
-        padding: 24px 32px;
-
+        padding: 20px 32px;
         margin-bottom: 24px;
-
-        box-shadow: 0 20px 48px -15px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-
+        box-shadow: 0 8px 24px -10px rgba(28, 25, 23, 0.05);
         display: flex;
-
         flex-wrap: wrap;
-
         align-items: center;
-
         justify-content: space-between;
-
         gap: 16px;
-
     }
-
-
 
     .studio-brand-group {
-
         display: flex;
-
         align-items: center;
-
         gap: 16px;
-
     }
-
-
 
     .brand-icon-box {
-
-        width: 56px;
-
-        height: 56px;
-
+        width: 52px;
+        height: 52px;
         border-radius: 16px;
-
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
-
+        background: linear-gradient(135deg, #1C1917 0%, #292524 100%);
+        color: #FBF9F5;
         display: flex;
-
         align-items: center;
-
         justify-content: center;
-
-        font-size: 1.85rem;
-
-        box-shadow: 0 8px 26px rgba(124, 58, 237, 0.45);
-
-        border: 1px solid rgba(255, 255, 255, 0.2);
-
+        font-size: 1.6rem;
+        box-shadow: 0 6px 18px rgba(28, 25, 23, 0.15);
+        border: 1px solid rgba(28, 25, 23, 0.1);
     }
-
-
 
     .brand-title {
-
-        font-size: 2.15rem;
-
-        font-weight: 800;
-
-        background: linear-gradient(135deg, #FFFFFF 30%, #94A3B8 100%);
-
-        -webkit-background-clip: text;
-
-        -webkit-text-fill-color: transparent;
-
+        font-size: 2.1rem;
+        font-weight: 700;
+        color: #1C1917 !important;
         margin: 0;
-
         line-height: 1.1;
-
     }
-
-
 
     .brand-badge {
-
-        font-size: 0.72rem;
-
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.70rem;
         font-weight: 700;
-
         text-transform: uppercase;
-
-        letter-spacing: 1px;
-
-        padding: 4px 10px;
-
-        border-radius: 12px;
-
-        background: linear-gradient(135deg, #06B6D4, #3B82F6);
-
-        color: white;
-
-        margin-left: 8px;
-
+        letter-spacing: 1.5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: #F5EFEB;
+        color: #854D0E;
+        border: 1px solid rgba(133, 77, 14, 0.2);
+        margin-left: 10px;
         vertical-align: middle;
-
-        -webkit-text-fill-color: white;
-
         white-space: nowrap !important;
-
         display: inline-block;
-
     }
-
-
 
     .brand-tagline {
-
-        font-size: 0.95rem;
-
-        color: #94A3B8;
-
+        font-size: 0.92rem;
+        color: #78716C;
         margin-top: 4px;
-
         font-weight: 400;
-
     }
-
-
 
     .studio-meta-badges {
-
         display: flex;
-
         flex-wrap: wrap;
-
         gap: 8px;
-
         align-items: center;
-
     }
-
-
 
     .meta-pill {
-
         display: inline-flex;
-
         align-items: center;
-
         gap: 6px;
-
-        background: rgba(255, 255, 255, 0.06);
-
-        border: 1px solid rgba(255, 255, 255, 0.12);
-
+        background: #F5F2EB;
+        border: 1px solid rgba(28, 25, 23, 0.08);
         padding: 6px 14px;
-
         border-radius: 30px;
-
         font-size: 0.8rem;
-
         font-weight: 600;
-
-        color: #CBD5E1;
-
-        backdrop-filter: blur(10px);
-
+        color: #44403C;
         transition: all 0.2s ease;
-
     }
-
     .meta-pill:hover {
-
-        background: rgba(255, 255, 255, 0.1);
-
-        border-color: rgba(99, 102, 241, 0.4);
-
+        background: #EFECE6;
+        border-color: rgba(28, 25, 23, 0.15);
     }
-
-
 
     .pulse-dot {
-
         width: 8px;
-
         height: 8px;
-
         border-radius: 50%;
-
-        background-color: #10B981;
-
-        box-shadow: 0 0 10px #10B981;
-
+        background-color: #15803D;
+        box-shadow: 0 0 8px rgba(21, 128, 61, 0.5);
         animation: pulseAnimation 2s infinite;
-
     }
-
-
 
     @keyframes pulseAnimation {
-
         0%, 100% { opacity: 1; transform: scale(1); }
-
         50% { opacity: 0.4; transform: scale(0.85); }
-
     }
 
+    /* Editorial Hero Section (Havenly / Aura Studios) */
+    .editorial-hero {
+        background: #FFFFFF;
+        border: 1px solid rgba(28, 25, 23, 0.08);
+        border-radius: 28px;
+        padding: 40px 48px;
+        margin-bottom: 28px;
+        box-shadow: 0 16px 40px -15px rgba(28, 25, 23, 0.06);
+    }
 
+    .hero-headline {
+        font-size: 2.85rem;
+        font-weight: 700;
+        line-height: 1.18;
+        color: #1C1917;
+        margin-top: 6px;
+        margin-bottom: 14px;
+    }
+    .hero-headline i {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        color: #B45309;
+    }
+
+    .hero-subtitle {
+        font-size: 1.05rem;
+        line-height: 1.6;
+        color: #57534E;
+        max-width: 650px;
+        margin-bottom: 24px;
+    }
+
+    /* Floating Architectural Filter Dock */
+    .hero-filter-dock {
+        background: #FAF8F5;
+        border: 1px solid rgba(28, 25, 23, 0.1);
+        border-radius: 20px;
+        padding: 14px 22px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 6px 20px -8px rgba(28, 25, 23, 0.06);
+        margin-top: 20px;
+    }
+
+    .filter-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .filter-label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #78716C;
+        font-weight: 600;
+    }
+    .filter-value {
+        font-size: 0.90rem;
+        font-weight: 700;
+        color: #1C1917;
+    }
+
+    /* Arched Image Container (from Aura Studios & Havenly) */
+    .arched-image-card {
+        border-radius: 120px 120px 24px 24px;
+        overflow: hidden;
+        border: 1px solid rgba(28, 25, 23, 0.08);
+        box-shadow: 0 20px 40px -15px rgba(28, 25, 23, 0.12);
+        height: 100%;
+        min-height: 340px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    /* Trust & Provenance Strip (from DreamHome) */
+    .trust-strip {
+        background: #F5F2EB;
+        border: 1px solid rgba(28, 25, 23, 0.06);
+        border-radius: 16px;
+        padding: 14px 24px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-around;
+        gap: 12px;
+        margin-top: 20px;
+    }
+    .trust-strip-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #44403C;
+    }
+
+    /* Aura Studios Curated Collection Cards */
+    .collection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin: 20px 0 28px 0;
+    }
+    .collection-card {
+        border-radius: 20px;
+        padding: 24px 20px;
+        color: #FFFFFF;
+        box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.12);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .collection-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.2);
+    }
+    .collection-card-title {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    .collection-card-rate {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85rem;
+        opacity: 0.9;
+        font-weight: 600;
+    }
+    .collection-card-desc {
+        font-size: 0.78rem;
+        opacity: 0.8;
+        margin-top: 8px;
+        line-height: 1.4;
+    }
 
     /* Auth Portal Main Header Card */
-
     .main-header-card {
-
-        background: rgba(15, 23, 42, 0.78);
-
-        border: 1px solid rgba(255, 255, 255, 0.12);
-
+        background: #FFFFFF;
+        border: 1px solid rgba(28, 25, 23, 0.08);
         border-radius: 24px;
-
-        backdrop-filter: blur(28px);
-
-        -webkit-backdrop-filter: blur(28px);
-
-        box-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-
+        box-shadow: 0 20px 48px -15px rgba(28, 25, 23, 0.08);
         margin-bottom: 28px;
-
     }
-
-
-
     .main-header-title {
-
         font-size: 3rem;
-
-        font-weight: 800;
-
-        letter-spacing: -0.03em;
-
-        background: linear-gradient(135deg, #FFFFFF 20%, #A5B4FC 60%, #38BDF8 100%);
-
-        -webkit-background-clip: text;
-
-        -webkit-text-fill-color: transparent;
-
+        font-weight: 700;
+        color: #1C1917 !important;
         margin-bottom: 6px;
-
     }
-
-
-
     .main-header-subtitle {
-
         font-size: 1.05rem;
-
-        color: #94A3B8;
-
+        color: #78716C;
         max-width: 680px;
-
         margin: 0 auto 16px auto;
-
         line-height: 1.5;
-
-        font-weight: 400;
-
     }
-
-
 
     .tag-pill {
-
         display: inline-flex;
-
         align-items: center;
-
         gap: 6px;
-
-        background: rgba(99, 102, 241, 0.12);
-
-        border: 1px solid rgba(99, 102, 241, 0.3);
-
-        color: #C7D2FE;
-
+        background: #F5F2EB;
+        border: 1px solid rgba(28, 25, 23, 0.08);
+        color: #44403C;
         padding: 6px 14px;
-
         border-radius: 9999px;
-
         font-size: 0.82rem;
-
         font-weight: 600;
-
         margin: 4px;
-
-        backdrop-filter: blur(10px);
-
-        transition: all 0.25s ease;
-
+        transition: all 0.2s ease;
     }
-
     .tag-pill:hover {
-
-        background: rgba(99, 102, 241, 0.25);
-
-        border-color: rgba(99, 102, 241, 0.6);
-
+        background: #EFECE6;
+        color: #1C1917;
         transform: translateY(-1px);
-
-        color: #FFFFFF;
-
     }
-
-
 
     /* Floating Logged-in User Profile Bar */
-
     .user-profile-bar {
-
-        background: rgba(15, 23, 42, 0.72);
-
-        border: 1px solid rgba(255, 255, 255, 0.1);
-
+        background: #FFFFFF;
+        border: 1px solid rgba(28, 25, 23, 0.08);
         border-radius: 16px;
-
         padding: 12px 24px;
-
         margin-bottom: 20px;
-
         display: flex;
-
         flex-wrap: wrap;
-
         align-items: center;
-
         justify-content: space-between;
-
         gap: 12px;
-
-        backdrop-filter: blur(16px);
-
-        box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.45);
-
+        box-shadow: 0 6px 18px -6px rgba(28, 25, 23, 0.05);
     }
 
-
-
-    /* Glass Cards */
-
+    /* Studio Glass Cards (Warm Alabaster) */
     .glass-card {
-
-        background: rgba(15, 23, 42, 0.68);
-
-        border: 1px solid rgba(255, 255, 255, 0.08);
-
-        border-radius: 18px;
-
-        padding: 24px;
-
-        backdrop-filter: blur(20px);
-
-        -webkit-backdrop-filter: blur(20px);
-
-        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
-
+        background: #FFFFFF;
+        border: 1px solid rgba(28, 25, 23, 0.08);
+        border-radius: 20px;
+        padding: 26px;
+        box-shadow: 0 10px 30px -10px rgba(28, 25, 23, 0.05);
         margin-bottom: 20px;
-
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-
+        transition: all 0.25s ease;
     }
-
     .glass-card:hover {
-
-        border-color: rgba(99, 102, 241, 0.35);
-
-        box-shadow: 0 20px 44px -10px rgba(99, 102, 241, 0.22);
-
+        border-color: rgba(180, 83, 9, 0.3);
+        box-shadow: 0 14px 36px -10px rgba(28, 25, 23, 0.08);
     }
-
-
 
     /* Section Subheaders */
-
     .section-title {
-
-        font-family: 'Outfit', sans-serif;
-
-        font-size: 1.35rem;
-
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.45rem;
         font-weight: 700;
-
         margin-top: 14px;
-
         margin-bottom: 12px;
-
-        color: #F8FAFC;
-
+        color: #1C1917;
         display: flex;
-
         align-items: center;
-
         gap: 12px;
-
-        border-left: 4px solid #6366F1;
-
+        border-left: 4px solid #B45309;
         padding-left: 14px;
-
         letter-spacing: -0.01em;
-
     }
-
-
 
     .step-badge {
-
         display: inline-flex;
-
         align-items: center;
-
         justify-content: center;
-
-        width: 28px;
-
-        height: 28px;
-
-        border-radius: 8px;
-
-        background: linear-gradient(135deg, #6366F1, #8B5CF6);
-
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        background: #1C1917;
         color: #FFFFFF;
-
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 0.88rem;
-
         font-weight: 800;
-
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-
+        box-shadow: 0 4px 10px rgba(28, 25, 23, 0.2);
     }
 
-
-
-    /* Primary CTA Buttons Overrides */
-
+    /* Primary CTA Buttons (Warm Charcoal & Terracotta Hover) */
     div.stButton > button[kind="primary"], div.stButton > button[data-testid="baseButton-primary"] {
-
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #d946ef 100%) !important;
-
-        color: #FFFFFF !important;
-
-        font-family: 'Outfit', sans-serif !important;
-
-        font-weight: 700 !important;
-
-        font-size: 0.98rem !important;
-
+        background: #1C1917 !important;
+        color: #FAF8F5 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
         letter-spacing: 0.3px !important;
-
-        border: none !important;
-
-        border-radius: 14px !important;
-
-        padding: 12px 24px !important;
-
-        box-shadow: 0 6px 22px rgba(124, 58, 237, 0.45) !important;
-
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-
+        border: 1px solid #1C1917 !important;
+        border-radius: 9999px !important;
+        padding: 12px 28px !important;
+        box-shadow: 0 6px 18px rgba(28, 25, 23, 0.15) !important;
+        transition: all 0.25s ease !important;
     }
-
     div.stButton > button[kind="primary"]:hover, div.stButton > button[data-testid="baseButton-primary"]:hover {
-
-        transform: translateY(-2px) !important;
-
-        box-shadow: 0 12px 32px rgba(124, 58, 237, 0.65) !important;
-
+        background: #B45309 !important;
+        border-color: #B45309 !important;
         color: #FFFFFF !important;
-
+        transform: translateY(-2px) !important;
+        box-shadow: 0 10px 24px rgba(180, 83, 9, 0.25) !important;
     }
-
-
 
     /* Secondary Buttons */
-
     div.stButton > button[kind="secondary"], div.stButton > button[data-testid="baseButton-secondary"] {
-
-        background: rgba(30, 41, 59, 0.65) !important;
-
-        color: #E2E8F0 !important;
-
-        border: 1px solid rgba(255, 255, 255, 0.14) !important;
-
-        border-radius: 14px !important;
-
+        background: #FFFFFF !important;
+        color: #1C1917 !important;
+        border: 1px solid rgba(28, 25, 23, 0.15) !important;
+        border-radius: 9999px !important;
         font-weight: 600 !important;
-
-        backdrop-filter: blur(10px) !important;
-
+        padding: 10px 22px !important;
         transition: all 0.2s ease !important;
-
     }
-
     div.stButton > button[kind="secondary"]:hover, div.stButton > button[data-testid="baseButton-secondary"]:hover {
-
-        background: rgba(51, 65, 85, 0.85) !important;
-
-        border-color: rgba(99, 102, 241, 0.4) !important;
-
-        color: #FFFFFF !important;
-
+        background: #F5F2EB !important;
+        border-color: rgba(28, 25, 23, 0.3) !important;
+        color: #1C1917 !important;
         transform: translateY(-1px) !important;
-
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3) !important;
-
     }
 
-
-
-    /* Streamlit Forms Reskinning */
-
+    /* Streamlit Forms */
     [data-testid="stForm"] {
-
-        background: rgba(15, 23, 42, 0.65) !important;
-
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-
+        background: #FFFFFF !important;
+        border: 1px solid rgba(28, 25, 23, 0.08) !important;
         border-radius: 20px !important;
-
         padding: 26px !important;
-
-        backdrop-filter: blur(20px) !important;
-
-        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45) !important;
-
+        box-shadow: 0 12px 32px rgba(28, 25, 23, 0.05) !important;
     }
-
-
 
     /* Input Fields & Select Boxes */
-
     div[data-baseweb="input"] > div, div[data-baseweb="select"] > div {
-
-        background-color: rgba(15, 23, 42, 0.85) !important;
-
-        border: 1px solid rgba(255, 255, 255, 0.14) !important;
-
+        background-color: #FAF8F5 !important;
+        border: 1px solid rgba(28, 25, 23, 0.14) !important;
         border-radius: 12px !important;
-
-        color: #F8FAFC !important;
-
+        color: #1C1917 !important;
         transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-
     }
-
     div[data-baseweb="input"]:focus-within > div, div[data-baseweb="select"]:focus-within > div {
-
-        border-color: #6366F1 !important;
-
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3) !important;
-
+        border-color: #B45309 !important;
+        box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.15) !important;
     }
-
-
 
     /* File Uploader Luxury Dropzone */
-
     section[data-testid="stFileUploadDropzone"] {
-
-        background: rgba(15, 23, 42, 0.55) !important;
-
-        border: 2px dashed rgba(99, 102, 241, 0.4) !important;
-
+        background: #FAF8F5 !important;
+        border: 2px dashed rgba(28, 25, 23, 0.2) !important;
         border-radius: 16px !important;
-
         padding: 28px !important;
-
         transition: all 0.25s ease !important;
-
     }
-
     section[data-testid="stFileUploadDropzone"]:hover {
-
-        border-color: #38BDF8 !important;
-
-        background: rgba(99, 102, 241, 0.1) !important;
-
+        border-color: #B45309 !important;
+        background: #F5EFEB !important;
     }
 
-
-
-    /* Slider Thumb and Glow Track */
-
-    div[data-baseweb="slider"] div[role="slider"] {
-
-        background-color: #38BDF8 !important;
-
-        box-shadow: 0 0 14px rgba(56, 189, 248, 0.8) !important;
-
-        border: 2px solid #FFFFFF !important;
-
-    }
-
-
-
-    /* Tabs Overrides */
-
+    /* Tabs Overrides (Warm Minimalist Segmented Pill) */
     .stTabs [data-baseweb="tab-list"] {
-
-        gap: 10px;
-
-        background: rgba(15, 23, 42, 0.85);
-
-        padding: 8px 10px;
-
-        border-radius: 16px;
-
-        border: 1px solid rgba(255, 255, 255, 0.1);
-
+        gap: 8px;
+        background: #F5F2EB;
+        padding: 6px 8px;
+        border-radius: 9999px;
+        border: 1px solid rgba(28, 25, 23, 0.08);
+        display: inline-flex;
     }
-
     .stTabs [data-baseweb="tab"] {
-
-        border-radius: 12px;
-
-        padding: 10px 26px;
-
-        font-family: 'Outfit', sans-serif;
-
+        border-radius: 9999px;
+        padding: 9px 24px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-weight: 600;
-
-        color: #94A3B8;
-
+        font-size: 0.90rem;
+        color: #78716C;
         border: none !important;
-
         transition: all 0.2s ease;
-
     }
-
     .stTabs [aria-selected="true"] {
-
-        background: linear-gradient(135deg, rgba(79, 70, 229, 0.4), rgba(124, 58, 237, 0.4)) !important;
-
+        background: #1C1917 !important;
         color: #FFFFFF !important;
-
-        border: 1px solid rgba(124, 58, 237, 0.55) !important;
-
-        box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3) !important;
-
+        box-shadow: 0 4px 12px rgba(28, 25, 23, 0.15) !important;
     }
-
-
 
     /* Material Swatch Preview Card */
-
     .material-swatch-card {
-
-        background: linear-gradient(145deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
-
-        border: 1px solid rgba(255, 255, 255, 0.14);
-
+        background: #FFFFFF;
+        border: 1px solid rgba(28, 25, 23, 0.1);
         border-radius: 16px;
-
         padding: 18px 22px;
-
         margin-top: 10px;
-
         margin-bottom: 14px;
-
         display: flex;
-
         align-items: center;
-
         gap: 16px;
-
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
-
+        box-shadow: 0 4px 16px rgba(28, 25, 23, 0.04);
         transition: all 0.25s ease;
-
     }
-
     .material-swatch-card:hover {
-
-        border-color: rgba(99, 102, 241, 0.45);
-
+        border-color: #B45309;
         transform: translateY(-2px);
-
-        box-shadow: 0 14px 32px rgba(99, 102, 241, 0.2);
-
+        box-shadow: 0 8px 24px rgba(28, 25, 23, 0.08);
     }
-
     .material-icon-bubble {
-
         width: 50px;
-
         height: 50px;
-
         border-radius: 14px;
-
-        background: rgba(255, 255, 255, 0.08);
-
+        background: #FAF8F5;
         display: flex;
-
         align-items: center;
-
         justify-content: center;
-
         font-size: 1.7rem;
-
         flex-shrink: 0;
-
-        border: 1px solid rgba(255, 255, 255, 0.12);
-
+        border: 1px solid rgba(28, 25, 23, 0.08);
     }
-
     .material-details-title {
-
+        font-family: 'Playfair Display', Georgia, serif;
         font-weight: 700;
-
-        font-size: 1.02rem;
-
-        color: #F8FAFC;
-
+        font-size: 1.05rem;
+        color: #1C1917;
     }
-
     .material-details-price {
-
         font-family: 'JetBrains Mono', monospace;
-
         font-weight: 700;
-
-        font-size: 0.95rem;
-
-        color: #38BDF8;
-
+        font-size: 0.92rem;
+        color: #9A3412;
     }
-
     .material-details-desc {
-
         font-size: 0.82rem;
-
-        color: #94A3B8;
-
+        color: #78716C;
         margin-top: 3px;
-
         line-height: 1.4;
-
     }
-
-
 
     /* HUD Metrics Card */
-
     .hud-card {
-
-        background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.85));
-
-        border: 1px solid rgba(56, 189, 248, 0.4);
-
+        background: #FFFFFF;
+        border: 1px solid rgba(28, 25, 23, 0.1);
         border-radius: 18px;
-
         padding: 24px;
-
-        color: #f8fafc;
-
-        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-
+        color: #1C1917;
+        box-shadow: 0 10px 28px rgba(28, 25, 23, 0.05);
         margin-top: 14px;
-
         margin-bottom: 18px;
-
     }
-
     .hud-header {
-
-        font-family: 'Outfit', sans-serif;
-
-        font-size: 1.05rem;
-
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.12rem;
         font-weight: 700;
-
-        color: #38bdf8;
-
+        color: #1C1917;
         display: flex;
-
         align-items: center;
-
         gap: 8px;
-
         margin-bottom: 16px;
-
-        letter-spacing: 0.5px;
-
-        text-transform: uppercase;
-
     }
-
     .hud-stat-grid {
-
         display: grid;
-
         grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-
         gap: 12px;
-
     }
-
     .hud-stat-box {
-
-        background: rgba(255, 255, 255, 0.05);
-
-        border: 1px solid rgba(255, 255, 255, 0.08);
-
+        background: #FAF8F5;
+        border: 1px solid rgba(28, 25, 23, 0.08);
         border-radius: 14px;
-
         padding: 16px 12px;
-
         text-align: center;
-
         transition: all 0.2s ease;
-
     }
-
     .hud-stat-box:hover {
-
-        background: rgba(255, 255, 255, 0.08);
-
-        border-color: rgba(56, 189, 248, 0.3);
-
+        background: #F5F2EB;
+        border-color: #B45309;
     }
-
     .hud-stat-val {
-
         font-family: 'JetBrains Mono', monospace;
-
         font-size: 1.45rem;
-
         font-weight: 700;
-
-        color: #38bdf8;
-
+        color: #1C1917;
     }
-
     .hud-stat-lbl {
-
         font-size: 0.72rem;
-
-        color: #94a3b8;
-
+        color: #78716C;
         text-transform: uppercase;
-
         letter-spacing: 0.5px;
-
         margin-top: 4px;
-
         font-weight: 600;
-
     }
-
-
 
     /* Tier Badges */
-
     .tier-badge-budget {
-
-        background: linear-gradient(135deg, #059669, #10b981);
-
-        color: white;
-
+        background: #ECFDF5;
+        border: 1px solid #10B981;
+        color: #065F46;
         padding: 6px 16px;
-
-        border-radius: 12px;
-
+        border-radius: 20px;
         font-weight: 700;
-
-        font-size: 0.95rem;
-
+        font-size: 0.90rem;
         display: inline-block;
-
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
-
     }
-
     .tier-badge-mid {
-
-        background: linear-gradient(135deg, #0284c7, #38bdf8);
-
-        color: white;
-
+        background: #EFF6FF;
+        border: 1px solid #3B82F6;
+        color: #1E40AF;
         padding: 6px 16px;
-
-        border-radius: 12px;
-
+        border-radius: 20px;
         font-weight: 700;
-
-        font-size: 0.95rem;
-
+        font-size: 0.90rem;
         display: inline-block;
-
-        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
-
     }
-
     .tier-badge-luxury {
-
-        background: linear-gradient(135deg, #d97706, #fbbf24);
-
-        color: #0f172a;
-
+        background: #FEF3C7;
+        border: 1px solid #F59E0B;
+        color: #92400E;
         padding: 6px 16px;
-
-        border-radius: 12px;
-
-        font-weight: 800;
-
-        font-size: 0.95rem;
-
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.90rem;
         display: inline-block;
-
-        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
-
     }
-
-
 
     /* Sidebar Styling */
-
     section[data-testid="stSidebar"] {
+        background-color: #F5F2EB !important;
+        border-right: 1px solid rgba(28, 25, 23, 0.08) !important;
+    }
 
-        background-color: #0B1120 !important;
+    /* Universal High-Contrast Legibility Overrides */
+    p, span, label, div, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span {
+        color: #1C1917 !important;
+    }
 
-        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    /* Form labels & widget titles */
+    [data-testid="stWidgetLabel"] label, 
+    [data-testid="stWidgetLabel"] p, 
+    [data-testid="stWidgetLabel"] span {
+        color: #1C1917 !important;
+        font-weight: 700 !important;
+        font-size: 0.95rem !important;
+    }
 
+    /* Captions & descriptions */
+    .stCaption, [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p, .stCaption p {
+        color: #57534E !important;
+        font-weight: 500 !important;
+        font-size: 0.84rem !important;
+    }
+
+    /* Sidebar High Contrast */
+    section[data-testid="stSidebar"] {
+        background-color: #F5F2EB !important;
+        border-right: 1px solid rgba(28, 25, 23, 0.12) !important;
+    }
+    section[data-testid="stSidebar"] h1, 
+    section[data-testid="stSidebar"] h2, 
+    section[data-testid="stSidebar"] h3, 
+    section[data-testid="stSidebar"] h4, 
+    section[data-testid="stSidebar"] p, 
+    section[data-testid="stSidebar"] span, 
+    section[data-testid="stSidebar"] label, 
+    section[data-testid="stSidebar"] div {
+        color: #1C1917 !important;
+    }
+    section[data-testid="stSidebar"] .stCaption, 
+    section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
+        color: #57534E !important;
+        font-weight: 500 !important;
+    }
+
+    /* Tabs Styling: High Contrast Pill Bar */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px !important;
+        background: #EFECE6 !important;
+        padding: 6px 10px !important;
+        border-radius: 9999px !important;
+        border: 1px solid rgba(28, 25, 23, 0.12) !important;
+        display: inline-flex !important;
+    }
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 9999px !important;
+        padding: 10px 22px !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-weight: 600 !important;
+        font-size: 0.88rem !important;
+        color: #57534E !important;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    .stTabs [data-baseweb="tab"] p, 
+    .stTabs [data-baseweb="tab"] span, 
+    .stTabs [data-baseweb="tab"] div {
+        color: #57534E !important;
+        font-weight: 600 !important;
+    }
+    .stTabs [aria-selected="true"] {
+        background: #1C1917 !important;
+        border-radius: 9999px !important;
+        box-shadow: 0 4px 14px rgba(28, 25, 23, 0.2) !important;
+    }
+    .stTabs [aria-selected="true"] p, 
+    .stTabs [aria-selected="true"] span, 
+    .stTabs [aria-selected="true"] div {
+        color: #FAF8F5 !important;
+        font-weight: 700 !important;
+    }
+
+    /* Slider Thumb & Track */
+    div[data-baseweb="slider"] div[role="slider"] {
+        background-color: #B45309 !important;
+        box-shadow: 0 0 10px rgba(180, 83, 9, 0.5) !important;
+        border: 2px solid #FFFFFF !important;
+    }
+    div[data-baseweb="slider"] [data-testid="stSliderTickBar"] {
+        background-color: #D6D3D1 !important;
+    }
+    div[data-baseweb="slider"] div[data-testid="stThumbValue"] {
+        color: #B45309 !important;
+        font-weight: 700 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+    }
+
+    /* Selectbox & Dropdown menus */
+    div[data-baseweb="select"] span {
+        color: #1C1917 !important;
+        font-weight: 600 !important;
     }
 
 </style>
-
 """, unsafe_allow_html=True)
-
-
-
-
 
 # =====================================================================
 
@@ -1181,13 +878,9 @@ if "logged_in" not in st.session_state:
 
     st.session_state.logged_in = False
 
-
-
 if "user" not in st.session_state:
 
     st.session_state.user = None
-
-
 
 # If not authenticated, display the Luxury Authentication Suite
 
@@ -1197,47 +890,43 @@ if not st.session_state.logged_in:
 
     st.markdown("""
 
-    <div class="main-header-card" style="text-align: center; padding: 40px 24px;">
 
-        <div style="display: flex; justify-content: center; margin-bottom: 14px;">
+<div class="main-header-card" style="text-align: center; padding: 40px 24px;">
 
-            <div class="brand-icon-box" style="width: 70px; height: 70px; font-size: 2.3rem;">🏡</div>
+<div style="display: flex; justify-content: center; margin-bottom: 14px;">
 
-        </div>
+<div class="brand-icon-box" style="width: 70px; height: 70px; font-size: 2.3rem;">🏡</div>
 
-        <div class="main-header-title">AI-GLAZE <span class="brand-badge" style="font-size: 0.85rem; padding: 4px 12px;">PRO STUDIO</span></div>
+</div>
 
-        <div class="main-header-subtitle">Autonomous Spatial Perception, Generative Interior Architecture & Real Material Intelligence</div>
+<div class="main-header-title">AI-GLAZE <span class="brand-badge" style="font-size: 0.85rem; padding: 4px 12px;">PRO STUDIO</span></div>
 
-        <div style="margin-top: 14px;">
+<div class="main-header-subtitle">Autonomous Spatial Perception, Generative Interior Architecture & Real Material Intelligence</div>
 
-            <span class="tag-pill">📐 Geometry-Preserved Redesign</span>
+<div style="margin-top: 14px;">
 
-            <span class="tag-pill">💰 Indian Market BoQ (INR ₹)</span>
+<span class="tag-pill">📐 Geometry-Preserved Redesign</span>
 
-            <span class="tag-pill">🛒 Real Sourcing & Supplier Links</span>
+<span class="tag-pill">💰 Indian Market BoQ (INR ₹)</span>
 
-            <span class="tag-pill">🏛️ Architect & Homeowner Portals</span>
+<span class="tag-pill">🛒 Real Sourcing & Supplier Links</span>
 
-            <span class="tag-pill">⚡ Offline-Capable Neural Pipeline</span>
+<span class="tag-pill">🏛️ Architect & Homeowner Portals</span>
 
-        </div>
+<span class="tag-pill">⚡ Offline-Capable Neural Pipeline</span>
 
-    </div>
+</div>
 
-    """, unsafe_allow_html=True)
+</div>
 
 
+""", unsafe_allow_html=True)
 
     auth_col1, auth_col2, auth_col3 = st.columns([1, 2.2, 1])
-
-
 
     with auth_col2:
 
         auth_tab_login, auth_tab_reg = st.tabs(["🔐 Sign In to Workspace", "📝 Register New Account"])
-
-
 
         # TAB 1: SIGN IN
 
@@ -1247,8 +936,6 @@ if not st.session_state.logged_in:
 
             st.caption("Sign in to access your spatial design workspace, neural pipelines, and saved project portfolios.")
 
-
-
             with st.form("login_form"):
 
                 login_user = st.text_input("Username or Email", placeholder="e.g. sanjana or architect@aiglaze.com")
@@ -1256,8 +943,6 @@ if not st.session_state.logged_in:
                 login_pwd = st.text_input("Password", type="password", placeholder="••••••••")
 
                 login_submitted = st.form_submit_button("Sign In to Studio Dashboard", type="primary", use_container_width=True)
-
-
 
             if login_submitted:
 
@@ -1285,13 +970,9 @@ if not st.session_state.logged_in:
 
                     st.error("Authentication module not loaded.")
 
-
-
             st.markdown("---")
 
-            st.markdown("<p style='text-align: center; color: #94A3B8; font-size: 0.88rem; font-weight: 600;'>⚡ One-Click Reviewer Access for Faculty & Reviewers:</p>", unsafe_allow_html=True)
-
-            
+            st.markdown("<p style='text-align: center; color: #78716C; font-size: 0.88rem; font-weight: 600;'>⚡ One-Click Reviewer Access for Faculty & Reviewers:</p>", unsafe_allow_html=True)
 
             demo_col_a, demo_col_b = st.columns(2)
 
@@ -1323,8 +1004,6 @@ if not st.session_state.logged_in:
 
                         st.rerun()
 
-
-
         # TAB 2: REGISTER
 
         with auth_tab_reg:
@@ -1332,8 +1011,6 @@ if not st.session_state.logged_in:
             st.markdown('<div class="section-title">📝 Create Studio Account</div>', unsafe_allow_html=True)
 
             st.caption("Join licensed architects and homeowners planning intelligent spaces.")
-
-
 
             with st.form("register_form"):
 
@@ -1349,8 +1026,6 @@ if not st.session_state.logged_in:
 
                     reg_email = st.text_input("Email Address", placeholder="e.g. sanjana@example.com")
 
-                
-
                 reg_col_c, reg_col_d = st.columns(2)
 
                 with reg_col_c:
@@ -1361,17 +1036,11 @@ if not st.session_state.logged_in:
 
                     reg_city = st.text_input("City", value="Bangalore")
 
-
-
                 reg_pwd = st.text_input("Password", type="password", placeholder="••••••••")
 
                 reg_pwd_confirm = st.text_input("Confirm Password", type="password", placeholder="••••••••")
 
-
-
                 reg_submitted = st.form_submit_button("Create Account & Launch Workspace", type="primary", use_container_width=True)
-
-
 
             if reg_submitted:
 
@@ -1409,15 +1078,9 @@ if not st.session_state.logged_in:
 
                         st.error(msg)
 
-
-
     # Stop rendering the protected dashboard until authenticated
 
     st.stop()
-
-
-
-
 
 # =====================================================================
 
@@ -1431,55 +1094,31 @@ user = st.session_state.user or {
 
 }
 
-
-
 # User Status Header Bar (Luxury Floating Dock)
 
 st.markdown(f"""
 
 <div class="user-profile-bar">
-
-    <div style="display: flex; align-items: center; gap: 14px;">
-
-        <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #6366F1, #8B5CF6); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45); border: 1px solid rgba(255, 255, 255, 0.2);">👤</div>
-
-        <div>
-
-            <div style="font-weight: 700; font-size: 1.02rem; color: #F8FAFC;">
-
-                {user['full_name']} &nbsp;
-
-                <span style="font-size: 0.74rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.35);">
-
-                    🏷️ {user['role']}
-
-                </span>
-
-            </div>
-
-            <div style="font-size: 0.8rem; color: #94A3B8; margin-top: 2px;">
-
-                📍 {user.get('city', 'Bangalore')} • Department of AI & ML, MVJCE
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div style="display: flex; align-items: center; gap: 10px;">
-
-        <span class="meta-pill"><span class="pulse-dot"></span> Studio Online</span>
-
-        <span class="meta-pill">v2.4 Pro</span>
-
-    </div>
-
+<div style="display: flex; align-items: center; gap: 14px;">
+<div style="width: 40px; height: 40px; border-radius: 12px; background: #1C1917; color: #FAF8F5; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(28, 25, 23, 0.15);">👤</div>
+<div>
+<div style="font-weight: 700; font-size: 1.02rem; color: #1C1917;">
+{user['full_name']} &nbsp;
+<span style="font-size: 0.74rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: #F5EFEB; color: #854D0E; border: 1px solid rgba(133, 77, 14, 0.2);">
+🏷️ {user['role']}
+</span>
 </div>
-
+<div style="font-size: 0.8rem; color: #57534E; margin-top: 2px;">
+📍 {user.get('city', 'Bangalore')} • Department of AI & ML, MVJCE
+</div>
+</div>
+</div>
+<div style="display: flex; align-items: center; gap: 10px;">
+<span class="meta-pill"><span class="pulse-dot"></span> Studio Online</span>
+<span class="meta-pill">v2.4 Pro</span>
+</div>
+</div>
 """, unsafe_allow_html=True)
-
-
 
 # Preset demo images if present (resolved against BASE_DIR without duplicates)
 
@@ -1493,17 +1132,11 @@ for fname in ["real_room.jpeg", "test_room.jpg"]:
 
         DEMO_IMAGE_CANDIDATES.append(resolved_candidate)
 
-
-
 DEFAULT_IMAGE = DEMO_IMAGE_CANDIDATES[0] if DEMO_IMAGE_CANDIDATES else None
-
-
 
 if "current_image_path" not in st.session_state or not st.session_state.current_image_path:
 
     st.session_state.current_image_path = DEFAULT_IMAGE
-
-
 
 if "depth_heatmap_path" not in st.session_state:
 
@@ -1511,21 +1144,15 @@ if "depth_heatmap_path" not in st.session_state:
 
     st.session_state.depth_heatmap_path = d_cand if os.path.exists(d_cand) else None
 
-
-
 if "structural_edges_path" not in st.session_state:
 
     e_cand = resolve_path("structural_edges.png")
 
     st.session_state.structural_edges_path = e_cand if os.path.exists(e_cand) else None
 
-
-
 if "spatial_metrics" not in st.session_state:
 
     st.session_state.spatial_metrics = None
-
-
 
 if "redesign_path" not in st.session_state:
 
@@ -1533,21 +1160,15 @@ if "redesign_path" not in st.session_state:
 
     st.session_state.redesign_path = r_cand if os.path.exists(r_cand) else None
 
-
-
 if "inpaint_path" not in st.session_state:
 
     i_cand = resolve_path("inpaint_output.png")
 
     st.session_state.inpaint_path = i_cand if os.path.exists(i_cand) else None
 
-
-
 if "detected_objects" not in st.session_state:
 
     st.session_state.detected_objects = None
-
-
 
 if "detected_objects_path" not in st.session_state:
 
@@ -1555,13 +1176,9 @@ if "detected_objects_path" not in st.session_state:
 
     st.session_state.detected_objects_path = do_cand if os.path.exists(do_cand) else None
 
-
-
 if "active_preview_mode" not in st.session_state:
 
     st.session_state.active_preview_mode = "✨ Style Redesign"
-
-
 
 if "last_action_msg" not in st.session_state:
 
@@ -1587,10 +1204,6 @@ if "fp_facing" not in st.session_state:
 if "fp_typology" not in st.session_state:
     st.session_state.fp_typology = "2BHK" 
 
-
-
-
-
 # =====================================================================
 
 # 4. SIDEBAR CONTROLS & INDIAN RUPEE (₹) BUDGET
@@ -1605,8 +1218,6 @@ with st.sidebar:
 
     st.caption(f"Active Profile: **{user['full_name']}** ({user['role']})")
 
-
-
     if st.button("🚪 Sign Out", use_container_width=True):
 
         st.session_state.logged_in = False
@@ -1615,11 +1226,7 @@ with st.sidebar:
 
         st.rerun()
 
-
-
     st.markdown("---")
-
-    
 
     # 1. Interior Style Selector
 
@@ -1649,8 +1256,6 @@ with st.sidebar:
 
     }
 
-    
-
     selected_style = st.selectbox(
 
         "Select Theme Aesthetic:",
@@ -1665,11 +1270,7 @@ with st.sidebar:
 
     st.caption(f"_{style_descriptions[selected_style]}_")
 
-
-
     st.markdown("---")
-
-
 
     # 2. Budget Allocation Slider (Indian Rupees ₹)
 
@@ -1690,8 +1291,6 @@ with st.sidebar:
         help="Used by the Knapsack Optimizer to swap luxury materials for budget-friendly alternatives."
 
     )
-
-    
 
     # Dynamic Tier Evaluation (Indian market benchmarks)
 
@@ -1719,25 +1318,15 @@ with st.sidebar:
 
         tier_desc = "Italian Carrara Marble (₹380/sq.ft), velvet textures & custom chandeliers."
 
-
-
     st.markdown(f'<div class="{tier_class}">{tier_label}</div>', unsafe_allow_html=True)
 
     st.caption(tier_desc)
 
-
-
     st.markdown("---")
-
-    
 
     # Ceiling Height Calibration
 
     ceiling_height = st.slider("Ceiling Height Calibration (Feet):", 8.0, 14.0, 9.5, 0.5)
-
-
-
-
 
 # =====================================================================
 
@@ -1748,36 +1337,100 @@ with st.sidebar:
 st.markdown("""
 
 <div class="studio-header">
-
-    <div class="studio-brand-group">
-
-        <div class="brand-icon-box">🏡</div>
-
-        <div>
-
-            <div class="brand-title">AI-GLAZE <span class="brand-badge">PRO ARCHITECTURE</span></div>
-
-            <div class="brand-tagline">Autonomous Spatial Perception, Generative Interior Architecture & Real Material Intelligence</div>
-
-        </div>
-
-    </div>
-
-    <div class="studio-meta-badges">
-
-        <div class="meta-pill"><span class="pulse-dot"></span> Neural Vision Mode Active</div>
-
-        <div class="meta-pill">🇮🇳 Indian Market (INR ₹)</div>
-
-        <div class="meta-pill">🏛️ VTU / MVJCE Capstone</div>
-
-    </div>
-
+<div class="studio-brand-group">
+<div class="brand-icon-box">🏡</div>
+<div>
+<div class="brand-title">AI-GLAZE <span class="brand-badge">ATELIER ARCHITECTURE</span></div>
+<div class="brand-tagline">Autonomous Spatial Perception, Generative Interior Architecture & Real Material Intelligence</div>
+</div>
+</div>
+<div class="studio-meta-badges">
+<div class="meta-pill"><span class="pulse-dot"></span> Studio Online</div>
+<div class="meta-pill">🇮🇳 Indian Market (INR ₹)</div>
+<div class="meta-pill">🏛️ VTU / MVJCE Capstone</div>
+</div>
 </div>
 
+<div class="editorial-hero">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 32px;">
+<div style="flex: 1 1 480px; max-width: 620px;">
+<div class="eyebrow-tag">✨ AUTONOMOUS ARCHITECTURAL SYNTHESIS</div>
+<h1 class="hero-headline">Artful Living, <i>Reimagined</i> by Neural Intelligence.</h1>
+<p class="hero-subtitle">
+Transforming monocular room photos and vacant plots into geometry-locked architectural blueprints, photorealistic generative redesigns, and certified Indian contractor BoQ schedules.
+</p>
+<div class="hero-filter-dock">
+<div class="filter-item">
+<span class="filter-label">🎨 Aesthetic Theme</span>
+<span class="filter-value">Scandinavian Minimalist</span>
+</div>
+<div style="height: 28px; width: 1px; background: rgba(28, 25, 23, 0.12);"></div>
+<div class="filter-item">
+<span class="filter-label">💰 Renovation Budget</span>
+<span class="filter-value">₹1,50,000 (Tier-1 Market)</span>
+</div>
+<div style="height: 28px; width: 1px; background: rgba(28, 25, 23, 0.12);"></div>
+<div class="filter-item">
+<span class="filter-label">🏛️ Surface Target</span>
+<span class="filter-value">Italian Marble / Kajaria</span>
+</div>
+</div>
+</div>
+<div style="flex: 1 1 320px; max-width: 420px;">
+<div class="arched-image-card" style="background-image: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'); min-height: 320px; display: flex; align-items: flex-end; padding: 20px;">
+<div style="background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px); border-radius: 14px; padding: 12px 18px; width: 100%; box-shadow: 0 4px 14px rgba(28,25,23,0.08);">
+<div style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 0.95rem; color: #1C1917;">The Modern Villa Atelier</div>
+<div style="font-size: 0.78rem; color: #78716C;">Geometry-Locked 3D Architectural Synthesis</div>
+</div>
+</div>
+</div>
+</div>
+<div class="trust-strip">
+<div class="trust-strip-item">🏛️ <strong>MVJCE Department of AI & ML</strong></div>
+<div style="color: #D6D3D1;">•</div>
+<div class="trust-strip-item">📐 <strong>ControlNet Geometry Locking</strong></div>
+<div style="color: #D6D3D1;">•</div>
+<div class="trust-strip-item">💰 <strong>100% Indian Market BoQ (INR ₹)</strong></div>
+<div style="color: #D6D3D1;">•</div>
+<div class="trust-strip-item">⚡ <strong>Sub-Second Local Tensor Engine</strong></div>
+<div style="color: #D6D3D1;">•</div>
+<div class="trust-strip-item">⭐ <strong>4.9 Architect Rating</strong></div>
+</div>
+</div>
+
+<div style="margin-top: 10px; margin-bottom: 24px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+<h3 style="font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 700; margin: 0; color: #1C1917;">Curated Architectural Materials & Finishes</h3>
+<span style="font-size: 0.82rem; color: #78716C; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Verified Indian Supplier SKUs</span>
+</div>
+<div class="collection-grid">
+<div class="collection-card" style="background: linear-gradient(145deg, #1E2238 0%, #2A3152 100%);">
+<div style="font-size: 1.8rem; margin-bottom: 8px;">🏛️</div>
+<div class="collection-card-title">Carrara Marble</div>
+<div class="collection-card-rate">₹380 / sq.ft</div>
+<div class="collection-card-desc">Italian pearl-white luxury slab with organic veining.</div>
+</div>
+<div class="collection-card" style="background: linear-gradient(145deg, #B25E43 0%, #D47A5D 100%);">
+<div style="font-size: 1.8rem; margin-bottom: 8px;">🧱</div>
+<div class="collection-card-title">Kajaria Vitrified</div>
+<div class="collection-card-rate">₹75 / sq.ft</div>
+<div class="collection-card-desc">High-gloss porcelain 1200×600mm laser-cut tiles.</div>
+</div>
+<div class="collection-card" style="background: linear-gradient(145deg, #C28E46 0%, #D9A862 100%);">
+<div style="font-size: 1.8rem; margin-bottom: 8px;">🪵</div>
+<div class="collection-card-title">Action TESA Oak</div>
+<div class="collection-card-rate">₹175 / sq.ft</div>
+<div class="collection-card-desc">Engineered warm honey-golden oak planks.</div>
+</div>
+<div class="collection-card" style="background: linear-gradient(145deg, #2D3A30 0%, #3D4E42 100%);">
+<div style="font-size: 1.8rem; margin-bottom: 8px;">🎨</div>
+<div class="collection-card-title">Royale Velvet</div>
+<div class="collection-card-rate">₹28 / sq.ft</div>
+<div class="collection-card-desc">Asian Paints washable luxury velvet sheen emulsion.</div>
+</div>
+</div>
+</div>
 """, unsafe_allow_html=True)
-
-
 
 # Main Navigation Tabs (Including My Saved Portfolio!)
 
@@ -1787,7 +1440,6 @@ tab_floorplan, tab_workspace, tab_portfolio, tab_contractor_report = st.tabs([
     "📁 My Saved Portfolio", 
     "📄 Contractor BoQ Document"
 ])
-
 
 # =====================================================================
 # TAB 1: CLIENT-DRIVEN PLOT-TO-FLOORPLAN & VASTU CAD BLUEPRINT (PILLAR 1)
@@ -1986,10 +1638,6 @@ with tab_floorplan:
                 if os.path.exists(default_demo):
                     st.image(default_demo, caption="AI-GLAZE Sample 30×40 ft 2BHK Vastu Blueprint Preview", use_container_width=True)
 
-
-
-
-
 # =====================================================================
 
 # TAB 2: MY SAVED PORTFOLIO (PERSISTENT SQLITE STORAGE)
@@ -2001,8 +1649,6 @@ with tab_portfolio:
     st.markdown('<div class="section-title">📁 Client Design Portfolio & Project History</div>', unsafe_allow_html=True)
 
     st.caption(f"Stored projects in local SQLite database (`users.db`) for **{user['full_name']}**.")
-
-
 
     if AUTH_AVAILABLE:
 
@@ -2044,10 +1690,6 @@ with tab_portfolio:
 
         st.warning("Database module offline.")
 
-
-
-
-
 # =====================================================================
 
 # TAB 3: CONTRACTOR BOQ DOCUMENT PREVIEW & DOWNLOAD
@@ -2060,11 +1702,7 @@ with tab_contractor_report:
 
     st.caption("Connects generated floorplan / scanned room areas to Indian construction & finishing costs (INR + 18% GST), engineering rationale, and smart budget trade-offs.")
 
-
-
     report_path = resolve_path("contractor_boq_report.html")
-
-
 
     if COST_ENGINE_AVAILABLE:
 
@@ -2073,8 +1711,6 @@ with tab_contractor_report:
         city_choices = ["Bangalore", "Mumbai", "Delhi", "Chennai", "Hyderabad"]
 
         city_idx = city_choices.index(default_city) if default_city in city_choices else 0
-
-
 
         with st.expander("📐 Floorplan & Material Parameters (Pillars 4 & 6)", expanded=True):
 
@@ -2093,8 +1729,6 @@ with tab_contractor_report:
             boq_city = cfg_c2.selectbox("City (Climate Context):", city_choices, index=city_idx, key="boq_city")
 
             boq_scope = cfg_c3.selectbox("Work Scope:", ["renovation", "full_construction"], key="boq_scope")
-
-
 
             if area_source.startswith("Generated Floorplan"):
 
@@ -2126,8 +1760,6 @@ with tab_contractor_report:
 
                 boq_budget_cap = float(budget_inr)
 
-
-
             mat_c1, mat_c2, mat_c3, mat_c4 = st.columns(4)
 
             floor_tiers = [m["tier"] for m in cost_engine.MATERIAL_CATALOGUE["flooring"]]
@@ -2151,8 +1783,6 @@ with tab_contractor_report:
                 st.session_state.pop("boq_applied_cuts", None)
 
                 st.rerun()
-
-
 
         if area_source.startswith("Generated Floorplan"):
 
@@ -2236,8 +1866,6 @@ with tab_contractor_report:
 
             )
 
-
-
         active_boq = st.session_state.get("boq_override_data", base_boq)
 
         reasoning_notes = reasoning_engine.generate_boq_reasoning_notes(active_boq, city=boq_city)
@@ -2246,13 +1874,9 @@ with tab_contractor_report:
 
         st.session_state["active_boq"] = active_boq
 
-
-
         fin = active_boq["financial_summary"]
 
         dims = active_boq["dimensions"]
-
-
 
         k1, k2, k3, k4, k5 = st.columns(5)
 
@@ -2275,8 +1899,6 @@ with tab_contractor_report:
         )
 
         k5.metric("Budget Status", fin.get("status", "Analyzed"), delta_txt)
-
-
 
         st.dataframe(
 
@@ -2308,8 +1930,6 @@ with tab_contractor_report:
 
         )
 
-
-
         # Architectural & Material Reasoning Notes
 
         st.markdown("### 🧠 Material Intelligence & Architectural Reasoning Notes")
@@ -2326,8 +1946,6 @@ with tab_contractor_report:
 
                 st.caption(f"**Cost Comparison:** {note['cost_comparison']} • **Standard:** {note['is_code']}")
 
-
-
         # Budget Trade-Off Advisor
 
         st.markdown("### 💡 Budget Trade-Off Advisor")
@@ -2338,15 +1956,11 @@ with tab_contractor_report:
 
         advisor_target = adv_c2.number_input("Or Target Cut (₹):", min_value=0.0, value=25000.0, step=5000.0, key="boq_advisor_inr")
 
-
-
         btn_c1, btn_c2 = st.columns(2)
 
         run_adv = btn_c1.button("🔍 Analyze Budget Cuts", use_container_width=True)
 
         apply_adv = btn_c2.button("✅ Apply Suggested Cuts to BoQ", type="primary", use_container_width=True)
-
-
 
         if run_adv:
 
@@ -2359,8 +1973,6 @@ with tab_contractor_report:
         else:
 
             advice = st.session_state.get("boq_last_advice") or reasoning_engine.suggest_budget_cuts(active_boq, advisor_target, city=boq_city)
-
-
 
         if advice.get("recommendations"):
 
@@ -2380,8 +1992,6 @@ with tab_contractor_report:
 
             st.warning(advice["client_explanation"])
 
-
-
         # Export updated HTML report with reasoning notes & 18% GST
 
         cost_engine.export_boq_report(
@@ -2396,15 +2006,11 @@ with tab_contractor_report:
 
         )
 
-
-
     if os.path.exists(report_path):
 
         with open(report_path, "r", encoding="utf-8") as f:
 
             html_content = f.read()
-
-
 
         col_rep1, col_rep2 = st.columns([3, 1])
 
@@ -2412,15 +2018,17 @@ with tab_contractor_report:
 
             st.markdown("""
 
-            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 12px 18px; margin-bottom: 14px;">
 
-                <span style="color: #34D399; font-weight: 700;">✅ Certified BoQ Specification Document</span> &nbsp;|&nbsp; 
+<div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 12px 18px; margin-bottom: 14px;">
 
-                <span style="color: #CBD5E1; font-size: 0.88rem;">18% GST &amp; Architectural Reasoning Notes Included</span>
+<span style="color: #34D399; font-weight: 700;">✅ Certified BoQ Specification Document</span> &nbsp;|&nbsp;
 
-            </div>
+<span style="color: #57534E; font-size: 0.88rem;">18% GST &amp; Architectural Reasoning Notes Included</span>
 
-            """, unsafe_allow_html=True)
+</div>
+
+
+""", unsafe_allow_html=True)
 
         with col_rep2:
 
@@ -2440,17 +2048,11 @@ with tab_contractor_report:
 
             )
 
-
-
         st.components.v1.html(html_content, height=700, scrolling=True)
 
     else:
 
         st.info("Contractor report is generating. Run the design pipeline to view the full document.")
-
-
-
-
 
 # =====================================================================
 
@@ -2468,11 +2070,7 @@ with tab_workspace:
 
     st.markdown('<div class="section-title"><span class="step-badge">1</span> Room Imagery Intake & Spatial Preprocessing</div>', unsafe_allow_html=True)
 
-    
-
     col_upload, col_preset = st.columns([2, 1])
-
-    
 
     with col_upload:
 
@@ -2498,8 +2096,6 @@ with tab_workspace:
 
             st.session_state.current_image_path = uploaded_save_path
 
-    
-
     with col_preset:
 
         st.markdown("**Quick Preset Spaces:**")
@@ -2524,8 +2120,6 @@ with tab_workspace:
 
                 st.rerun()
 
-
-
     current_img = st.session_state.current_image_path
 
     if not current_img or not os.path.exists(current_img):
@@ -2534,11 +2128,7 @@ with tab_workspace:
 
         st.stop()
 
-
-
     st.markdown("---")
-
-
 
     # -------------------------------------------------------------
 
@@ -2547,8 +2137,6 @@ with tab_workspace:
     # -------------------------------------------------------------
 
     st.markdown('<div class="section-title"><span class="step-badge">2</span> Spatial Perception & Neural Vision HUD</div>', unsafe_allow_html=True)
-
-    
 
     vision_toggle_col, _ = st.columns([2, 2])
 
@@ -2564,23 +2152,15 @@ with tab_workspace:
 
         )
 
-
-
     if ai_vision_mode:
 
         st.info("💡 **AI Vision Mode Active:** Displaying Metric Depth Anything V2 thermal map and Canny structural edge locking.")
 
-        
-
         vis_col1, vis_col2, vis_col3 = st.columns(3)
-
-        
 
         with vis_col1:
 
             st.image(current_img, caption="Input Room Photo", use_container_width=True)
-
-        
 
         with vis_col2:
 
@@ -2598,8 +2178,6 @@ with tab_workspace:
 
                     st.image(d_path, caption="Depth Anything V2 Heatmap", use_container_width=True)
 
-        
-
         with vis_col3:
 
             if st.session_state.structural_edges_path and os.path.exists(st.session_state.structural_edges_path):
@@ -2616,15 +2194,11 @@ with tab_workspace:
 
                     st.image(e_path, caption="Canny Structural Wireframe", use_container_width=True)
 
-
-
         # HUD Spatial Metrics
 
         if st.session_state.spatial_metrics is None and VISION_ENGINE_AVAILABLE:
 
             st.session_state.spatial_metrics = vision_engine.estimate_spatial_metrics(current_img, ceiling_height)
-
-
 
         metrics = st.session_state.spatial_metrics or {
 
@@ -2636,63 +2210,59 @@ with tab_workspace:
 
         }
 
-
-
         st.markdown(f"""
 
-        <div class="hud-card">
 
-            <div class="hud-header">📐 Spatial Dimension & Boundary HUD</div>
+<div class="hud-card">
 
-            <div class="hud-stat-grid">
+<div class="hud-header">📐 Spatial Dimension & Boundary HUD</div>
 
-                <div class="hud-stat-box">
+<div class="hud-stat-grid">
 
-                    <div class="hud-stat-val">{metrics['floor_area_sqft']}</div>
+<div class="hud-stat-box">
 
-                    <div class="hud-stat-lbl">Floor Area (Sq.Ft)</div>
+<div class="hud-stat-val">{metrics['floor_area_sqft']}</div>
 
-                </div>
+<div class="hud-stat-lbl">Floor Area (Sq.Ft)</div>
 
-                <div class="hud-stat-box">
+</div>
 
-                    <div class="hud-stat-val">{metrics['wall_surface_area_sqft']}</div>
+<div class="hud-stat-box">
 
-                    <div class="hud-stat-lbl">Wall Surface (Sq.Ft)</div>
+<div class="hud-stat-val">{metrics['wall_surface_area_sqft']}</div>
 
-                </div>
+<div class="hud-stat-lbl">Wall Surface (Sq.Ft)</div>
 
-                <div class="hud-stat-box">
+</div>
 
-                    <div class="hud-stat-val">{metrics['estimated_length_ft']}' × {metrics['estimated_width_ft']}'</div>
+<div class="hud-stat-box">
 
-                    <div class="hud-stat-lbl">Est. L × W</div>
+<div class="hud-stat-val">{metrics['estimated_length_ft']}' × {metrics['estimated_width_ft']}'</div>
 
-                </div>
+<div class="hud-stat-lbl">Est. L × W</div>
 
-                <div class="hud-stat-box">
+</div>
 
-                    <div class="hud-stat-val">Locked</div>
+<div class="hud-stat-box">
 
-                    <div class="hud-stat-lbl">{metrics['detected_structural_openings']}</div>
+<div class="hud-stat-val">Locked</div>
 
-                </div>
+<div class="hud-stat-lbl">{metrics['detected_structural_openings']}</div>
 
-            </div>
+</div>
 
-        </div>
+</div>
 
-        """, unsafe_allow_html=True)
+</div>
+
+
+""", unsafe_allow_html=True)
 
     else:
 
         st.image(current_img, caption="Input Room Photo (Flip 'AI Vision Mode' toggle above to reveal depth & edge maps)", use_container_width=True)
 
-
-
     st.markdown("---")
-
-
 
     # -------------------------------------------------------------
 
@@ -2704,11 +2274,7 @@ with tab_workspace:
 
     st.caption("ControlNet locks the room geometry while localized inpainting swaps target surface materials on demand.")
 
-
-
     redesign_col_controls, redesign_col_view = st.columns([1, 1])
-
-
 
     with redesign_col_controls:
 
@@ -2732,8 +2298,6 @@ with tab_workspace:
 
                     st.rerun()
 
-
-
         st.markdown("---")
 
         st.markdown("#### 🪄 Magic Wand: Selective Surface Inpainting")
@@ -2752,8 +2316,6 @@ with tab_workspace:
 
         ])
 
-
-
         material_specs = {
 
             "Italian Carrara Marble": ("🏛️", "Italian Carrara Marble", "₹380 / sq.ft", "Polished luxury pearl-white surface with organic grey-blue veining."),
@@ -2770,23 +2332,23 @@ with tab_workspace:
 
         st.markdown(f"""
 
-        <div class="material-swatch-card">
 
-            <div class="material-icon-bubble">{m_icon}</div>
+<div class="material-swatch-card">
 
-            <div>
+<div class="material-icon-bubble">{m_icon}</div>
 
-                <div class="material-details-title">{m_title} &nbsp;<span class="material-details-price">{m_price}</span></div>
+<div>
 
-                <div class="material-details-desc">{m_desc}</div>
+<div class="material-details-title">{m_title} &nbsp;<span class="material-details-price">{m_price}</span></div>
 
-            </div>
+<div class="material-details-desc">{m_desc}</div>
 
-        </div>
+</div>
 
-        """, unsafe_allow_html=True)
+</div>
 
 
+""", unsafe_allow_html=True)
 
         if st.button("✨ Inpaint Surface Only", use_container_width=True):
 
@@ -2808,23 +2370,17 @@ with tab_workspace:
 
                     st.rerun()
 
-
-
     with redesign_col_view:
 
         if st.session_state.last_action_msg:
 
             st.success(st.session_state.last_action_msg)
 
-            
-
         preview_modes = ["✨ Style Redesign", "🪄 Localized Inpaint", "🔄 Before vs After Side-by-Side"]
 
         curr_mode = st.session_state.active_preview_mode
 
         curr_idx = preview_modes.index(curr_mode) if curr_mode in preview_modes else 0
-
-        
 
         chosen_view = st.radio(
 
@@ -2840,8 +2396,6 @@ with tab_workspace:
 
         st.session_state.active_preview_mode = chosen_view
 
-
-
         if chosen_view == "✨ Style Redesign":
 
             if st.session_state.redesign_path and os.path.exists(st.session_state.redesign_path):
@@ -2854,8 +2408,6 @@ with tab_workspace:
 
                 st.image(Image.open(current_img), caption="Original Room Preview", use_container_width=True)
 
-                
-
         elif chosen_view == "🪄 Localized Inpaint":
 
             if st.session_state.inpaint_path and os.path.exists(st.session_state.inpaint_path):
@@ -2867,8 +2419,6 @@ with tab_workspace:
             else:
 
                 st.image(Image.open(current_img), caption="Original Room Preview (Click 'Inpaint Surface Only' to generate)", use_container_width=True)
-
-                
 
         elif chosen_view == "🔄 Before vs After Side-by-Side":
 
@@ -2896,11 +2446,7 @@ with tab_workspace:
 
                     st.info("Click 'Generate Redesign' or 'Inpaint Surface' to see comparison.")
 
-
-
     st.markdown("---")
-
-
 
     # -------------------------------------------------------------
 
@@ -2909,8 +2455,6 @@ with tab_workspace:
     # -------------------------------------------------------------
 
     st.markdown('<div class="section-title"><span class="step-badge">4</span> YOLOv8 Furniture Localization & Spatial Pins</div>', unsafe_allow_html=True)
-
-    
 
     if st.button("📍 Detect Furniture Objects & Interactive Pins", use_container_width=True):
 
@@ -2926,8 +2470,6 @@ with tab_workspace:
 
                 st.rerun()
 
-
-
     det_col_img, det_col_table = st.columns([1, 1])
 
     with det_col_img:
@@ -2939,8 +2481,6 @@ with tab_workspace:
         else:
 
             st.image(Image.open(current_img), caption="Original Room", use_container_width=True)
-
-    
 
     with det_col_table:
 
@@ -2978,11 +2518,7 @@ with tab_workspace:
 
             st.info("Click 'Detect Furniture Objects' above to run YOLOv8 on this space.")
 
-
-
     st.markdown("---")
-
-
 
     # -------------------------------------------------------------
 
@@ -2992,29 +2528,27 @@ with tab_workspace:
 
     st.markdown('<div class="section-title"><span class="step-badge">5</span> Save Project to Persistent Portfolio</div>', unsafe_allow_html=True)
 
-    
-
     st.markdown("""
 
-    <div class="glass-card" style="padding: 22px 24px; margin-top: 10px;">
 
-        <div style="font-weight: 700; color: #F8FAFC; font-size: 1.05rem; margin-bottom: 4px;">
+<div class="glass-card" style="padding: 22px 24px; margin-top: 10px;">
 
-            💼 Store Session in Architect & Client Portfolio
+<div style="font-weight: 700; color: #1C1917; font-size: 1.05rem; margin-bottom: 4px;">
 
-        </div>
+💼 Store Session in Architect & Client Portfolio
 
-        <div style="font-size: 0.85rem; color: #94A3B8; margin-bottom: 16px;">
+</div>
 
-            Saves high-resolution synthesis renders, localized inpaint maps, YOLO inventory, and BoQ calculations to your SQLite project history.
+<div style="font-size: 0.85rem; color: #78716C; margin-bottom: 16px;">
 
-        </div>
+Saves high-resolution synthesis renders, localized inpaint maps, YOLO inventory, and BoQ calculations to your SQLite project history.
 
-    </div>
+</div>
 
-    """, unsafe_allow_html=True)
+</div>
 
 
+""", unsafe_allow_html=True)
 
     save_col_name, save_col_btn = st.columns([3, 1])
 
@@ -3066,10 +2600,6 @@ with tab_workspace:
 
                 st.error("Database connection unavailable.")
 
-
-
-
-
 # =====================================================================
 
 # 6. FOOTER
@@ -3080,11 +2610,11 @@ st.markdown("---")
 
 st.markdown(f"""
 
-<div style="text-align: center; color: #64748b; font-size: 0.85rem; padding: 16px;">
 
-    <strong>AI-GLAZE</strong> • College Capstone Project • MVJ College of Engineering • Indian Market Edition (INR ₹)
+<div style="text-align: center; color: #78716C; font-size: 0.85rem; padding: 16px;">
+
+<strong>AI-GLAZE</strong> • College Capstone Project • MVJ College of Engineering • Indian Market Edition (INR ₹)
 
 </div>
 
 """, unsafe_allow_html=True)
-
