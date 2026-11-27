@@ -1,10 +1,10 @@
+import csv
 import json
 from pathlib import Path
 import sqlite3
 import time
 
 import numpy as np
-import pandas as pd
 from PIL import Image
 import torch
 from transformers import AutoModel, AutoProcessor
@@ -113,13 +113,19 @@ def build_index(batch_size: int = BATCH_SIZE):
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    catalog = pd.read_csv(CATALOG_PATH)
+    with open(CATALOG_PATH, mode="r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        catalog = list(reader)
+
     required_cols = {
         "id", "name", "category", "tier", "price",
         "unit", "url", "supplier", "image_path"
     }
 
-    missing = required_cols - set(catalog.columns)
+    if not catalog:
+        raise ValueError(f"Catalog CSV is empty: {CATALOG_PATH}")
+
+    missing = required_cols - set(catalog[0].keys())
     if missing:
         raise ValueError(f"Missing required catalog columns: {sorted(missing)}")
 
@@ -129,15 +135,15 @@ def build_index(batch_size: int = BATCH_SIZE):
 
     # Filter and preload valid records
     valid_items = []
-    for _, row in catalog.iterrows():
-        rel_path = str(row["image_path"]).strip()
+    for row in catalog:
+        rel_path = str(row.get("image_path", "")).strip()
         if not rel_path or rel_path.lower() == "nan":
-            print(f"Skipping {row['id']}: missing image_path.")
+            print(f"Skipping {row.get('id')}: missing image_path.")
             continue
 
         full_img_path = (BASE_DIR / rel_path).resolve()
         if not full_img_path.is_file():
-            print(f"Skipping {row['id']}: image not found ({full_img_path}).")
+            print(f"Skipping {row.get('id')}: image not found ({full_img_path}).")
             continue
 
         valid_items.append({
@@ -183,8 +189,8 @@ def build_index(batch_size: int = BATCH_SIZE):
             tier = str(row["tier"]).strip().lower()
             price = float(row["price"])
             unit = str(row["unit"])
-            url = str(row["url"]) if pd.notna(row["url"]) else ""
-            supplier = str(row["supplier"]) if pd.notna(row["supplier"]) else ""
+            url = str(row.get("url", "")) if row.get("url") else ""
+            supplier = str(row.get("supplier", "")) if row.get("supplier") else ""
             rel_path = item["rel_path"]
 
             all_embeddings.append(vec)
