@@ -1,13 +1,19 @@
 # Python
 __pycache__/
-*.py[cod]
+*.py[codz]
 *$py.class
 *.so
 .Python
-env/
+
+# Virtual environments
+.env
+.envrc
+.venv
 venv/
-.venv/
 ENV/
+env/
+env.bak/
+venv.bak/
 
 # Distribution / packaging
 build/
@@ -22,15 +28,24 @@ parts/
 sdist/
 var/
 wheels/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# Virtual environments
-.env
-.venv
-venv/
-ENV/
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py.cover
+.pytest_cache/
 
 # IDE / Editor
 .vscode/

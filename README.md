@@ -1,6 +1,6 @@
-# AI-GLAZE: AI-Powered Product Catalog & Visual Search Engine
+# AI-GLAZE: AI-Powered Home Planning, Interior Design and Material Recommendation Platform
 
-AI-GLAZE is an intelligent interior design product catalog and visual search system. Upload any furniture or room decor image to find visually matching products, filter by category and price tier, and discover budget-friendly alternatives using Google's SigLIP vision transformer and an embedded SQLite vector database.
+AI-GLAZE is an intelligent interior design product catalog, spatial planning, and visual search system customized for the Indian market (INR ₹). Upload any furniture or room decor image to find visually matching products, filter by category and price tier, and discover budget-friendly alternatives using Google's SigLIP vision transformer and an embedded SQLite vector database.
 
 ---
 
@@ -8,6 +8,10 @@ AI-GLAZE is an intelligent interior design product catalog and visual search sys
 
 ```
 AI-GLAZE/
+├── app.py                         # Master orchestration pipeline (Tech Lead)
+├── vision_engine.py               # CV, Depth, Redesign, Inpaint, YOLOv8 (Member 1)
+├── cost_engine.py                 # Surface Area Math & BoQ Optimizer (Member 4)
+├── ui_dashboard.py                # Interactive Streamlit Dashboard
 ├── backend/
 │   ├── main.py                    # FastAPI server (visual search, static images, CORS, products API)
 │   └── ui.html                    # Visual Search Studio web interface
@@ -20,7 +24,7 @@ AI-GLAZE/
 │   ├── DATA_COLLECTION_GUIDE.md   # Complete guide on scraping, cleaning & deduplicating data
 │   ├── requirements.txt           # Catalog manager dependencies
 │   ├── data/
-│   │   ├── catalog.csv            # Master product catalog (6 categories, 3 price tiers)
+│   │   ├── catalog.csv            # Master product catalog (Indian brands, 6 categories, 3 price tiers)
 │   │   ├── import_template.csv    # Template for batch product additions
 │   │   └── images/                # Product image repository
 │   └── models/
@@ -43,7 +47,7 @@ Start the FastAPI server:
 Open your browser and navigate to:
 👉 **http://127.0.0.1:8000/**
 
-- Drag and drop any furniture or room photo.
+- Drag and drop any furniture or room photo (e.g. `real_room.jpeg`).
 - View matching product cards with similarity percentages and price tags in ₹.
 - Click **"💡 Cheaper Alternatives"** to see budget-friendly swaps with calculated savings!
 
@@ -56,7 +60,7 @@ Test visual similarity search with any image directly from the terminal:
 .\.venv\Scripts\python.exe catalog_manager\test_catalog.py
 
 # Test with your own furniture photo
-.\.venv\Scripts\python.exe catalog_manager\test_catalog.py --image "path\to\your_photo.jpg" --category sofa --top_k 3
+.\.venv\Scripts\python.exe catalog_manager\test_catalog.py --image "real_room.jpeg" --category sofa --top_k 3
 ```
 
 ---
@@ -64,14 +68,6 @@ Test visual similarity search with any image directly from the terminal:
 ### 3. Add New Products & Rebuild the Vector Index
 Add products and automatically square-pad images and update the vector database:
 ```powershell
-# Add a single product from a URL
-.\.venv\Scripts\python.exe catalog_manager\collect_data.py --add `
-  --name "Velvet Scandinavian Armchair" `
-  --category sofa `
-  --tier mid `
-  --price 16500 `
-  --image "https://images.unsplash.com/photo-1580481077195-c3a8b2735741?w=500"
-
 # Rebuild the SQLite vector index manually
 .\.venv\Scripts\python.exe catalog_manager\build_index.py
 ```
@@ -81,7 +77,8 @@ Add products and automatically square-pad images and update the vector database:
 ## 🛠️ Core Technology Stack
 
 - **Vision Transformer**: `google/siglip-base-patch16-224` (768-dimensional normalized embeddings)
+- **Object Detection**: `yolov8n.pt` YOLOv8 Furniture Detection
 - **Vector Database**: Embedded **SQLite** (`models/catalog.db`) with sub-millisecond dot-product cosine similarity
 - **API Framework**: **FastAPI** + **Uvicorn** with CORS and static asset serving
 - **Image Processing**: **Pillow (PIL)** with Lanczos aspect-ratio preserving square padding
-- **Interactive UI**: Standalone responsive HTML5/CSS3/JavaScript web studio
+- **Interactive UI**: Standalone responsive HTML5/CSS3/JavaScript web studio & Streamlit Dashboard

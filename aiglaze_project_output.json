@@ -1,0 +1,53 @@
+{
+    "project_name": "AI-GLAZE Living Room Transformation",
+    "market": "India (INR \u20b9)",
+    "input_photo": "real_room.jpeg",
+    "style_chosen": "Scandinavian Minimalist",
+    "target_budget_inr": 120000.0,
+    "vision_outputs": {
+        "depth_heatmap": "depth_heatmap.png",
+        "structural_edges": "structural_edges.png",
+        "redesign_render": "redesign_output.png",
+        "inpaint_render": "inpaint_output.png",
+        "room_dimensions": {
+            "floor_area_sqft": 184.0,
+            "wall_surface_area_sqft": 477.5,
+            "estimated_length_ft": 16.0,
+            "estimated_width_ft": 11.5,
+            "detected_structural_openings": "2 Windows, 1 Doorway"
+        },
+        "detected_furniture_count": 3
+    },
+    "procurement_and_sourcing": [
+        {
+            "name": "Kajaria Double-Charged Vitrified Tile",
+            "rate_sqft": 75.0,
+            "tier": "Budget",
+            "supplier": "Kajaria World, Bangalore"
+        },
+        {
+            "name": "Asian Paints Royale Luxury Emulsion",
+            "rate_sqft": 28.0,
+            "coats": 2,
+            "supplier": "Asian Paints Colour Idea Store"
+        },
+        {
+            "name": "Modern 3-Seater L-Shape Fabric Sectional",
+            "price": 38000.0,
+            "supplier": "Urban Ladder / Pepperfry"
+        }
+    ],
+    "bill_of_quantities_inr": {
+        "flooring_subtotal": 15180.0,
+        "painting_subtotal": 26740.0,
+        "furniture_subtotal": 38000.0,
+        "grand_total": 79920.0,
+        "budget_cap": 120000.0,
+        "status": "Within Budget",
+        "delta": 40080.0,
+        "optimization_applied": true
+    },
+    "optimization_notes": [
+        "Swapped 'Italian Carrara Polished Marble' to 'Kajaria Double-Charged Vitrified Tile' (Saved: \u20b961,732.00)"
+    ]
+}
